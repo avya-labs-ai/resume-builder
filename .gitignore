@@ -1,5 +1,15 @@
+# User's personal data — gitignored so each user's identity stays on their own machine.
+# New users: run the onboarding skill ("help me set this project up") to create these from templates.
+input/
+output/
+proj_refs/
+
+# macOS
 .DS_Store
 **/.DS_Store
-output/
-input/
-proj_refs/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz

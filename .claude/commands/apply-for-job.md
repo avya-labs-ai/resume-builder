@@ -1,12 +1,12 @@
 ---
-description: Tailor CV + cover letter (EN + DE) against a job description. Reads input/resume.tex and input/profile.md, generates 4 LaTeX files in output/{company}-{role}/.
+description: Tailor CV + cover letter in all configured languages against a job description. Reads input/profile.md (identity + language config) and input/resume.tex, then generates one CV + one cover letter per language into output/{company}-{role}/.
 argument-hint: "[optional: paste JD inline, otherwise you'll be prompted]"
 allowed-tools: Read, Write, Bash
 ---
 
 # Apply for Job — Resume + Cover Letter Generator
 
-You are an expert career coach, resume writer, and bilingual (English/German) translator. Your task is to take a job description and tailor the user's CV and cover letter to it, in both English and German, and save them as LaTeX files.
+You are an expert career coach, resume writer, and multilingual translator. Your task is to take a job description and tailor the user's CV and cover letter to it, generating one CV and one cover letter per configured language, saved as LaTeX files.
 
 ## Inputs
 
@@ -17,25 +17,39 @@ You are an expert career coach, resume writer, and bilingual (English/German) tr
 Read these files using the Read tool:
 
 **Required:**
-- `input/resume.tex` — the user's current CV in LaTeX format. **Preserve its document class, packages, and structural template**; only adapt content.
-- `input/profile.md` — consolidated personal/career profile: identity framing rules, full career history, skills, achievements, constraints, contact details.
+- `input/profile.md` — consolidated personal/career profile, identity config, and language list. The YAML front-matter at the top contains `identity` (name, file_slug) and `languages` (ordered list of {code, name} pairs). **Preserve the document class, packages, and structural template of `input/resume.tex`**; only adapt content.
+- `input/resume.tex` — the user's current CV in LaTeX format.
+
+If either file is missing, stop immediately and tell the user:
+> "The file `{missing_file}` does not exist. Run the onboarding skill first — just say 'help me set this project up' and I'll walk you through it."
+
+**Extract from the front-matter of `input/profile.md`:**
+```
+identity.full_name       → the person's name (used in signatures, cover letter sign-offs)
+identity.file_slug       → filename component (e.g. "JaneDoe") — used in output filenames
+languages[]              → ordered list of {code, name} — generate one CV+letter per entry
+primary_language         → the source language; all others are translated from primary outputs
+```
 
 **Active project context (read all files in `proj_refs/`):**
 Use Bash to list them first, then read each one:
 ```bash
 ls proj_refs/*.md 2>/dev/null
 ```
-Each file is a structured summary of one Avya Labs project built in 2026. They contain engineering depth (PRD discipline, ADRs, WAT framework, stack decisions, current status) that `input/profile.md` only summarises. When drafting the CV and cover letter:
-- Select the 1–2 most JD-relevant projects from `proj_refs/` to feature or reference
-- Use the specific stack, methodology, and outcome language from `proj_refs/` (not just the high-level summary in `profile.md`)
+Each file is a structured summary of one of the user's active or recent projects. When drafting the CV and cover letter:
+- Select the 1–2 most JD-relevant projects to feature or reference
+- Use the specific stack, methodology, and outcome language from `proj_refs/` (not just the high-level summaries in `profile.md`)
 - Prefer `proj_refs/` detail over `profile.md` summaries when they differ
 
 **Note on identity framing (from `input/profile.md`):**
-- Default current-role label on CVs: **"Founder, Avya Labs"**
-- Downshift to "Independent AI Consultant — Avya Labs" only when the JD is for a Big-4 / large-enterprise in-house position where a founder label may read as a flight-risk signal
-- Never present Avya Labs as a revenue-generating external consultancy — it is pre-revenue
+Follow the framing rules in the "Identity & Framing Rules for the Agent" section of `input/profile.md`. The user has specified their preferred labels and downshift conditions there.
 
-If `input/resume.tex` or `input/profile.md` is missing, stop and tell the user clearly what's missing and where to put it.
+**Note on missing lang_rules files:**
+For each language code in `languages[]`, check whether `lang_rules/{code}.md` exists:
+```bash
+ls lang_rules/*.md 2>/dev/null
+```
+If a rules file is missing for a chosen language, generate it now from `lang_rules/_template.md` using your language knowledge (section headings, date format, salutation/closing, LaTeX escapes, length ratio). Write it to `lang_rules/{code}.md` before proceeding. Announce: "Generated `lang_rules/{code}.md` for {language name}."
 
 ### Step 2 — Get the job description
 
@@ -79,113 +93,118 @@ Use Bash to create the folder:
 mkdir -p "output/{folder-name}"
 ```
 
-### Step 5 — Generate the 4 LaTeX files
+### Step 5 — Generate files for each configured language
 
-Generate **complete, compilable `.tex` files** (with `\documentclass`, packages, `\begin{document}` … `\end{document}`).
+For each language in the `languages[]` list from the profile front-matter:
 
-**Rules for all files:**
-- Escape LaTeX special characters in any free-text content (`&`, `%`, `$`, `#`, `_`, `{`, `}`, `~`, `^`, `\`). This includes underscores inside code/file names — write `quality\_checker`, `node\_builders`, `book\_expenses`, etc. An unescaped `_` in text mode causes a hard compile error.
-- **Skills bullets must be concise — no inline counts or parenthetical lists.** Specific numbers (e.g. "38 unit tests, 5 integration tests") belong in the Experience section where they earned. In Skills, write "formal test plans (unit, integration, E2E, edge-case)" — not the raw numbers. Overly long skills bullets cause overfull hbox warnings and push the CV off one page.
-- Be truthful to the profile + original CV. Do not invent experience or skills.
-- Emphasize, reorder, and reframe — don't fabricate.
+1. Load `lang_rules/{code}.md` — this defines section headings, date format, salutation/closing, LaTeX escapes, and length ratio for that language.
+2. Generate a complete, compilable CV and cover letter `.tex` file using the rules from that language file.
+3. Write:
+   - `output/{folder-name}/Resume_{file_slug}_{code}.tex`
+   - `output/{folder-name}/CoverLetter_{file_slug}_{code}.tex`
+
+**Generate primary language first.** For non-primary languages, translate/adapt from the primary-language outputs — do not re-derive from the profile independently. Apply the target language's section headings, date format, salutation conventions, and length-ratio adjustments as specified in its `lang_rules/` file.
+
+---
+
+#### Rules for ALL generated files
+
+**LaTeX escaping (HARD REQUIREMENT):**
+- Escape LaTeX special characters in any free-text content: `&` → `\&`, `%` → `\%`, `$` → `\$`, `#` → `\#`, `_` → `\_`, `{` → `\{`, `}` → `\}`.
+- This includes underscores inside code/file names — write `quality\_checker`, `book\_expenses`, etc. An unescaped `_` in text mode causes a hard compile error.
+- Apply any language-specific escapes listed in `lang_rules/{code}.md` (e.g. German umlauts: `ä` → `\"a`).
 
 **ATS-friendly conventions (HARD REQUIREMENT for all CVs and cover letters):**
 
 Applicant Tracking Systems parse the resulting PDF. To survive parsing:
 
-**CV header format (HARD REQUIREMENT):**
-- `\name{Girish Mohan}` — name only
-- One `\address{}` containing phone, email, and LinkedIn URL only: `+49 176 47372783 \\ girish\_mohan@live.com \\ \href{https://www.linkedin.com/in/giri91/}{linkedin.com/in/giri91}`
-- **No physical address line.** Do NOT add a second `\address{Floridaring 56 \\ ...}`.
-- **No portfolio link** in the CV header.
+**CV header format:**
+- `\name{full_name}` — name only, no title
+- One `\address{}` containing phone, email, and LinkedIn URL only. Use the spelled-out LinkedIn URL as link text.
+- **No physical address line in the header.**
+- **No portfolio link in the CV header.** (Portfolio URL may appear in the cover letter signature if relevant.)
 
-**Separator convention (HARD REQUIREMENT):**
-- Use `$\diamond$` as the separator in all single-line grouped lists (Skills bullets, Languages line). Do NOT use ` | ` or commas.
+**Separator convention:**
+- Use `$\diamond$` as the separator in all single-line grouped lists (Skills bullets, Languages line).
+- Do NOT use ` | ` or commas as list separators in the Skills section.
 
-**No content repetition across sections (HARD REQUIREMENT):**
+**No content repetition across sections:**
 - **Skills** = methodology and tooling vocabulary only. No specific artifact names, no test counts, no file names.
 - **Experience** = specific artifacts, metrics, and deliverables (test counts, file names, ADR counts, frameworks applied).
-- **Projects** = what was built (product/tool description, stack). Not how it was validated — that stays in Experience.
+- **Projects** = what was built (product/tool, stack, key output). Not how it was validated.
 
-- **No math-mode symbols in body text for separators — EXCEPTION: `$\diamond$` is the approved separator and must be used.** Other math-mode glyphs (`$\circ$`, `$\bullet$`, `$+$` in phone numbers) must be avoided. Phone number `+` must be a plain `+`.
-- **Spell out URLs in plain text.** Do NOT hide URLs behind link text with `\href{long-url}{LinkedIn}` — ATS sees only the word "LinkedIn". Use one of:
-  - `LinkedIn: linkedin.com/in/giri91` (plain text)
-  - `\href{https://linkedin.com/in/giri91}{linkedin.com/in/giri91}` (URL as link text)
-  Same applies to portfolio links: use the readable URL, not a hidden hyperlink.
-- **Use standard, recognisable section headings.** ATS keyword-matches these:
-  - English: `Summary` (or `Professional Summary`), `Skills` (or `Technical Skills`), `Experience` (or `Professional Experience`), `Education`, `Languages`, `Certifications`. Avoid creative names like `Expertise` (rename to `Skills`), `My Journey`, `Hustle`, etc.
-  - German: `Profil` / `Zusammenfassung`, `Kenntnisse` / `F\"ahigkeiten`, `Berufserfahrung` / `Berufliche Erfahrung`, `Ausbildung`, `Sprachen`, `Zertifizierungen`. Avoid creative German names.
-- **One column. No tables, text boxes, multi-column layouts, or images** for ATS-critical content. Tables for the `Languages` line are OK only if the layout still flows top-to-bottom and the cell contents are plain text. If `multicol` is used in the original template, drop it for ATS-critical content sections.
-- **Plain hyphens in dates.** Use `Sep 2022 - Mar 2025` (ASCII hyphen with spaces), not en-dashes (`–`) or em-dashes (`—`). Same for date ranges in German (`Sep. 2022 - M\"arz 2025`).
-- **Contact info in the body, not in headers/footers.** The `\address{}` macro in the existing template puts contact info at the top of the page body (not in a true `\fancyhead`), so it is fine — but never move contact info into a real PDF header/footer macro.
-- **Standard fonts.** Default Computer Modern / Latin Modern / `lmodern` / `helvet` / `times` are all ATS-safe. Avoid decorative fonts.
-- **Include exact JD keywords verbatim** at least once where truthful. ATS scoring is keyword-driven. E.g., if the JD says "metamorphic testing" and you have related experience, use that exact phrase rather than a synonym.
-- **No icons / Font Awesome glyphs / emoji.** Even if compiled, ATS will skip them and the surrounding text may be mangled.
-- **Cover letters follow the same rules.** Plain section breaks, ASCII hyphens, spelled-out URLs in the signature block.
+**URL format:**
+- Spell out URLs in plain text. Do NOT hide URLs behind display-only link text (e.g. avoid `\href{long-url}{LinkedIn}`). Instead use `\href{https://linkedin.com/in/slug}{linkedin.com/in/slug}` — same URL as both href and display text.
 
-When in doubt, prefer ATS-readable over visually clever.
+**Section headings:**
+- Use the ATS-safe headings from `lang_rules/{code}.md`. Avoid creative names.
 
-**Files to write (use the Write tool, one per file):**
+**Layout:**
+- One column. No tables, text boxes, multi-column layouts, or images for ATS-critical content.
+- Plain hyphens in dates (`Sep 2022 - Mar 2025`), not en-dashes or em-dashes.
+- Contact info in the body (via `\address{}`), not in PDF headers/footers.
+- Standard fonts only (Computer Modern, Latin Modern, helvet, times).
 
-1. **`output/{folder-name}/Resume_GirishMohan_en.tex`** — English CV
-   - Preserve the LaTeX class, packages, and section structure of `input/resume.tex`
-   - Reorder/rewrite content so the most JD-relevant experience and skills come first
-   - **HARD CONSTRAINT: must fit on a single A4 page when compiled.**
-     Use the following tactics to enforce this:
-     - **Professional summary:** 3–4 lines maximum.
-     - **Skills section:** 4–6 grouped bullets maximum; pack related items into one line per group using ` | ` (plain ASCII pipe) separators — never `$\diamond$` or other math-mode glyphs (see ATS rules below).
-     - **Current/most-relevant role:** at most 4 bullets, each 1–2 lines.
-     - **Mid-career roles (3–7 years back):** at most 2–3 bullets, each 1–2 lines.
-     - **Older roles (>7 years back):** condense to a single line (just title + 1 sentence). Do not break out programme-by-programme detail in the CV body — that belongs on LinkedIn / portfolio.
-     - **No "Hobbies" section** unless the JD explicitly asks for cultural fit signals.
-     - **Languages:** one line.
-     - **Font sizes:** keep body bullets at `\fontsize{10pt}{12pt}\selectfont` (do not enlarge).
-     - If after a draft the content still looks like it would overflow, drop the lowest-relevance bullets first — never shrink the font further.
-   - The original `input/resume.tex` files are already structured to fit one page; staying close to their density is a good sanity check.
+**No icons or emoji.** No Font Awesome glyphs. ATS parsers skip them and may corrupt surrounding text.
 
-2. **`output/{folder-name}/CoverLetter_GirishMohan_en.tex`** — English cover letter
-   - Use `\documentclass{letter}` (or a clean article-based letter layout if the original CV's style suggests it)
-   - Address the hiring team / company by name (from the JD if available; otherwise "Hiring Team")
-   - 3–4 paragraphs: hook + relevant experience + why this company + close
-   - Sign-off with the user's name from `input/profile.md`
+**Include exact JD keywords verbatim** at least once where truthful. ATS scoring is keyword-driven.
 
-3. **`output/{folder-name}/Resume_GirishMohan_de.tex`** — German CV
-   - Translate the English CV. Use **natural professional German**, not literal translation.
-   - Localize: date formats (`DD.MM.YYYY`), section headings (Berufserfahrung, Ausbildung, Kenntnisse, etc.), conventional German CV phrasing.
-   - Same LaTeX structure as `Resume_GirishMohan_en.tex`.
-   - **HARD CONSTRAINT: must fit on a single A4 page when compiled.** Same tactics as `Resume_GirishMohan_en.tex`. German text typically runs ~10–15% longer than English — so tighten phrasing where needed (drop filler like "im Rahmen meiner T\"atigkeit" → just state the action) rather than dropping content that survives in the EN version.
+---
 
-**Projects section (include in both CVs, between Experience and Education):**
-Select the 2–3 most JD-relevant projects from `proj_refs/`. For each, write ONE line describing what was built — stack, key output, notable architecture decision. Do NOT repeat validation methodology, test counts, or ADR details from the Experience section. Current Avya Labs projects available:
-- **Avya Labs Website** (avya-labs.com) — production marketing site, two-lane post-booking architecture, same-origin proxies, GDPR-compliant. Stack: Vanilla JS, Tailwind, Vercel, Cal.com, VAPI, n8n.
-- **Avya Bookkeeping Agent** — AI-orchestrated expense automation ingesting Gmail receipts, classifying vendors, archiving to Drive, writing to live Sheets dashboard. Multi-currency, crash-safe, idempotent. Stack: Python 3.11, Claude API, Google Workspace APIs.
-- **Weavy Workflow Agent** — Claude Code skill generating production Weavy workflow JSON from plain-language descriptions. Knows 100+ AI models, 14 creative roles, 7 architecture patterns. Stack: Python, Claude Code.
-German section heading: `Projekte`.
+#### CV one-page constraint (HARD REQUIREMENT)
 
-4. **`output/{folder-name}/CoverLetter_GirishMohan_de.tex`** — German cover letter
-   - Translate the English cover letter into natural professional German.
-   - Use German business letter conventions: `Sehr geehrte Damen und Herren,` (or specific name if known), `Mit freundlichen Grüßen` close, `Betreff:` line.
-   - Localize the date format.
+**Must fit on a single A4 page when compiled.** Use these tactics:
+- **Professional summary:** 3–4 lines maximum.
+- **Skills section:** 4–6 grouped bullets; pack related items using `$\diamond$` separators within each bullet line.
+- **Current / most-relevant role:** at most 4 bullets, each 1–2 lines.
+- **Mid-career roles (3–7 years back):** at most 2–3 bullets, each 1–2 lines.
+- **Older roles (>7 years back):** condense to a single line (title + 1 sentence). No expanded detail.
+- **No Hobbies section** unless the JD explicitly signals cultural fit.
+- **Languages line:** one line.
+- **Font size:** keep body bullets at `\fontsize{10pt}{12pt}\selectfont` — do not shrink further.
+- If after a draft the content still looks like it would overflow, drop the lowest-relevance bullets first — never shrink the font.
+- For non-primary languages: apply the `length_ratio` from `lang_rules/{code}.md` proactively — tighten phrasing *before* the content overflows, rather than after. Drop filler phrases specific to that language (e.g. German: omit "im Rahmen meiner Tätigkeit").
+
+---
+
+#### CV structure
+
+Preserve the LaTeX class, packages, and section structure of `input/resume.tex`. Output sections in this order:
+1. Professional Summary (using the heading from `lang_rules/{code}.md`)
+2. Skills / Technical Skills
+3. Professional Experience
+4. Projects (select 1–2 most JD-relevant from `proj_refs/`; one line each — stack + key output + notable decision. For non-primary languages, use the translated heading from `lang_rules/{code}.md`.)
+5. Education
+6. Languages (spoken languages from profile, with CEFR levels)
+
+---
+
+#### Cover letter structure
+
+- Use `\documentclass{letter}` or a clean article-based letter layout.
+- Include: city + date header (formatted per `lang_rules/{code}.md`), subject line (with label from `lang_rules/{code}.md`), salutation (from `lang_rules/{code}.md`), 3–4 paragraphs, closing (from `lang_rules/{code}.md`), signature with full name.
+- Paragraph structure: hook + relevant experience + why this company + call to action / close.
+- Address the hiring team / company by name (from the JD if available; otherwise use the generic salutation from `lang_rules/{code}.md`).
+- Cover letters follow the same ATS rules as CVs: plain section breaks, ASCII hyphens, spelled-out URLs in the signature block.
 
 ### Step 6 — Confirm completion
 
 Print a summary:
 
 ```
-✓ Done. Output saved to: output/{folder-name}/
+Done. Output saved to: output/{folder-name}/
 
 Files created:
-- Resume_GirishMohan_en.tex
-- Resume_GirishMohan_de.tex
-- CoverLetter_GirishMohan_en.tex
-- CoverLetter_GirishMohan_de.tex
+[list each file — one per language, CV + cover letter]
 
 Next: compile them in your LaTeX editor.
+To add another language later: add it to the `languages` list in input/profile.md,
+then re-run /apply-for-job.
 ```
 
 ## Constraints
 
-- **Never modify** `input/resume.tex` or `input/profile.md` — they are read-only sources.
-- **Always write 4 files**, even if some content is minimal.
+- **Never modify** `input/resume.tex`, `input/profile.md`, or any file in `input.example/` or `lang_rules/` — they are source files (except that you MAY write a new `lang_rules/{code}.md` if one is missing for a configured language).
 - **One job description per run** → one output subfolder.
 - If `output/{folder-name}/` already exists, overwrite the files (most recent run wins).
+- **Be truthful.** Adaptation = emphasise, reorder, reframe. Never invent experience or skills not present in the profile.
