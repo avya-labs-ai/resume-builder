@@ -57,7 +57,7 @@ You can also pass the JD inline:
 /apply-for-job Senior Backend Engineer at Acme GmbH — Go, Kubernetes, 5 yrs experience required
 ```
 
-Open the `.tex` files in your LaTeX editor (Overleaf, TeXShop, VS Code + LaTeX Workshop) and compile.
+Open the `.tex` files in your LaTeX editor and compile to PDF. If you've never used LaTeX before, see [Compiling your resume (no LaTeX experience needed)](#compiling-your-resume-no-latex-experience-needed) below.
 
 ---
 
@@ -167,6 +167,58 @@ See `proj_refs.example/_README.md` for the expected format.
 This generates a structured markdown file documenting your project's architecture, tech stack, metrics, and achievements. Save the output file to `proj_refs/` in this Resume Builder directory. On the next `/apply-for-job` run, the agent will read these summaries and weave relevant technical details into your CV and cover letter.
 
 Alternatively, if you use [Avya AIOS](https://github.com/avya-labs/aios) or another Claude Code setup with the `/project-summary` skill, the output is ready to drop directly into `proj_refs/`.
+
+---
+
+## Compiling your resume (no LaTeX experience needed)
+
+The agent produces `.tex` files — these are the source files for a PDF. You need a free LaTeX editor to turn them into a PDF. The steps below use **TeXstudio**, which is free and works on Windows and Mac.
+
+### Step 1 — Install a LaTeX distribution
+
+A LaTeX distribution is the engine that does the actual PDF rendering. You only need to do this once.
+
+- **Windows:** Download and install [MiKTeX](https://miktex.org/download). During install, choose "Install missing packages on the fly: Yes".
+- **Mac:** Download and install [MacTeX](https://www.tug.org/mactex/). It's a large download (~4 GB) but installs everything you need in one go.
+
+### Step 2 — Install TeXstudio
+
+Download and install [TeXstudio](https://www.texstudio.org/) for your operating system. It's free.
+
+### Step 3 — Prepare your output folder
+
+After running `/apply-for-job`, your output folder will look like this:
+
+```
+output/
+└── acme-senior-backend-engineer/
+    ├── Resume_JaneDoe_en.tex
+    └── CoverLetter_JaneDoe_en.tex
+```
+
+Copy the file `resources/resume.cls` from this repo into that same folder, so it looks like:
+
+```
+output/
+└── acme-senior-backend-engineer/
+    ├── resume.cls                  ← copy this here
+    ├── Resume_JaneDoe_en.tex
+    └── CoverLetter_JaneDoe_en.tex
+```
+
+The `.cls` file is the style sheet that controls the visual layout. Without it in the same folder, the `.tex` file will not compile.
+
+### Step 4 — Open and compile in TeXstudio
+
+1. Open TeXstudio.
+2. Go to **File → Open** and open the `.tex` file you want to compile (e.g. `Resume_JaneDoe_en.tex`).
+3. Press **F5** (or click the green **Build & View** button in the toolbar).
+4. TeXstudio compiles the file and opens a PDF preview on the right.
+5. The PDF is saved in the same folder as the `.tex` file.
+
+Repeat steps 2-5 for the cover letter.
+
+> **If you see errors on first compile:** MiKTeX may need to download a few additional packages. A dialog will appear asking for permission — click "Install". After it finishes, press F5 again. If you still run into problems, claude code would be able to help you fix them.
 
 ---
 
