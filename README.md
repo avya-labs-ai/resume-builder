@@ -1,8 +1,10 @@
 # Resume Builder
 
-A Claude Code automation that tailors your CV and cover letter to a specific job description and saves them as LaTeX files ready to compile. Supports any number of languages — English, German, French, Spanish, and more.
+A Claude Code and Codex automation that tailors your CV and cover letter to a specific job description and saves them as LaTeX files ready to compile. Supports any number of languages — English, German, French, Spanish, and more.
 
-No API key required. No Python. It runs entirely inside your Claude Code session.
+No API key required. No Python. It runs entirely inside your Claude Code or Codex session.
+
+Codex reads `AGENTS.md` for the project contract. Claude Code keeps using `CLAUDE.md` and `.claude/`.
 
 ---
 
@@ -11,12 +13,33 @@ No API key required. No Python. It runs entirely inside your Claude Code session
 ```bash
 git clone <repo-url>
 cd Resume_builder
-# Open in Claude Code, then say:
+# Open in Claude Code or Codex, then say:
 ```
 
 > **"Help me set this project up"**
 
-The onboarding skill will guide you through the rest: it asks about your background, career history, and which languages you want your documents in — then writes your personal profile and CV template automatically.
+The onboarding workflow will guide you through the rest: it asks about your background, career history, and which languages you want your documents in — then writes your personal profile and CV template automatically.
+
+---
+
+## Claude Code or Codex
+
+Claude Code users can keep using the existing slash commands:
+
+```text
+/apply-for-job
+/project-summary
+```
+
+Codex users can ask for the same workflows in plain language:
+
+```text
+Apply for this job: [paste job description]
+Help me set this project up
+Create a project summary for my CV
+```
+
+If you type `/apply-for-job` or `/project-summary` in Codex, `AGENTS.md` maps those names to the workflow prompts in `.codex/commands/`.
 
 ---
 
@@ -37,13 +60,13 @@ These personal files are **gitignored** — your data stays on your machine only
 
 ## Daily use
 
-Once onboarded, open Claude Code in this directory and run:
+Once onboarded, open Claude Code or Codex in this directory and run:
 
 ```
 /apply-for-job
 ```
 
-Claude will ask you to paste the job description. It then:
+The agent will ask you to paste the job description. It then:
 
 1. Prints a **gap analysis** (chat only — not saved)
 2. Creates a folder: `output/{company}-{role}/`

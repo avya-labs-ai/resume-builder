@@ -10,6 +10,8 @@ A single-purpose automation: take a job description, produce a tailored CV and c
 
 There is no application server, no API, no Python runtime. The engine is Claude Code itself, invoked via the `/apply-for-job` slash command. New users are onboarded via the `onboarding` skill (auto-triggered on first open, or type "help me set this project up").
 
+This repo also supports Codex. Codex reads `AGENTS.md` and the prompt wrappers in `.codex/commands/`; those files mirror the Claude workflows and should stay behaviorally aligned with this file and `.claude/`.
+
 ---
 
 ## How it works
@@ -100,6 +102,8 @@ One Markdown file per active project. These give the CV agent deep engineering c
 ├── .claude/
 │   ├── commands/apply-for-job.md      # The slash command — core automation logic
 │   └── skills/onboarding/SKILL.md     # Auto-triggered onboarding skill
+├── .codex/
+│   └── commands/                      # Codex prompt wrappers for the same workflows
 │
 ├── input.example/                     # Templates (ship with repo)
 │   ├── profile.template.md
@@ -132,6 +136,7 @@ One Markdown file per active project. These give the CV agent deep engineering c
 │       └── CoverLetter_{slug}_{code}.tex
 │
 ├── .gitignore                         # Gitignores input/, output/, proj_refs/
+├── AGENTS.md                          # Working rules for Codex sessions
 ├── CLAUDE.md                          # This file
 └── README.md                          # Human-facing usage docs
 ```
