@@ -39,7 +39,7 @@ Help me set this project up
 Create a project summary for my CV
 ```
 
-If you type `/apply-for-job` or `/project-summary` in Codex, `AGENTS.md` maps those names to the workflow prompts in `.codex/commands/`.
+Note: Codex does not currently show repo-local `.codex/commands/*.md` files as slash commands in the composer. Those files are workflow references for Codex to read via `AGENTS.md`, so use plain language prompts instead of expecting `/apply-for-job` to appear in the command menu.
 
 ---
 
@@ -60,10 +60,16 @@ These personal files are **gitignored** — your data stays on your machine only
 
 ## Daily use
 
-Once onboarded, open Claude Code or Codex in this directory and run:
+Once onboarded, open Claude Code in this directory and run:
 
 ```
 /apply-for-job
+```
+
+In Codex, ask in plain language instead:
+
+```text
+Apply for this job: [paste job description]
 ```
 
 The agent will ask you to paste the job description. It then:
@@ -78,6 +84,12 @@ You can also pass the JD inline:
 
 ```
 /apply-for-job Senior Backend Engineer at Acme GmbH — Go, Kubernetes, 5 yrs experience required
+```
+
+In Codex, the equivalent is:
+
+```text
+Apply for this job: Senior Backend Engineer at Acme GmbH - Go, Kubernetes, 5 yrs experience required
 ```
 
 Open the `.tex` files in your LaTeX editor and compile to PDF. If you've never used LaTeX before, see [Compiling your resume (no LaTeX experience needed)](#compiling-your-resume-no-latex-experience-needed) below.
@@ -178,24 +190,36 @@ primary_language: en
 See `proj_refs.example/_README.md` for the expected format.
 
 **Generating a project summary:** 
-1. Right click and copy the project-summary.md file from the root of this project (under .claude/commands).  
-2. Create a commands (case-sensitive) folder under .claude in your root directory, if it doesn't already exist.
+1. Right click and copy the project-summary.md file from the root of this project (under .claude/commands or .codex/commands).  
+2. Create a commands (case-sensitive) folder under .claude (or .codex) in your root directory, if it doesn't already exist.
 3. Paste the project-summary.md into the commands folder.
 4. Start a new claude session in your VS-Code or Terminal inside VS-Code and run
 
 ```
-/project-summary
+For claude code: /project-summary
+```
+
+or:
+
+```
+For Codex:
+
+"Create a project summary"
+
+OR more specifically
+
+"Create a project summary for this repo using the workflow in .codex/commands/project-summary.md"
 ```
 
 This generates a structured markdown file documenting your project's architecture, tech stack, metrics, and achievements. Save the output file to `proj_refs/` in this Resume Builder directory. On the next `/apply-for-job` run, the agent will read these summaries and weave relevant technical details into your CV and cover letter.
 
 Alternatively, if you use [Avya AIOS](https://github.com/avya-labs/aios) or another Claude Code setup with the `/project-summary` skill, the output is ready to drop directly into `proj_refs/`.
 
----
+
 
 ## Compiling your resume (no LaTeX experience needed)
 
-The agent produces `.tex` files — these are the source files for a PDF. You need a free LaTeX editor to turn them into a PDF. The steps below use **TeXstudio**, which is free and works on Windows and Mac.
+The agent produces `.tex` files — these are the source files for a PDF. You can compile them locally directly from VS-code or with a free LaTeX editor such as **TeXstudio**, or upload them to **Overleaf** and compile in your browser. The local steps below use TeXstudio, which is free and works on Windows and Mac.
 
 ### Step 1 — Install a LaTeX distribution
 
@@ -242,6 +266,18 @@ The `.cls` file is the style sheet that controls the visual layout. Without it i
 Repeat steps 2-5 for the cover letter.
 
 > **If you see errors on first compile:** MiKTeX may need to download a few additional packages. A dialog will appear asking for permission — click "Install". After it finishes, press F5 again. If you still run into problems, claude code would be able to help you fix them.
+
+### Alternative — Use Overleaf
+
+You can also use [Overleaf](https://www.overleaf.com/) instead of installing LaTeX locally:
+
+1. Create a new blank Overleaf project.
+2. Upload the generated `.tex` file you want to compile.
+3. Upload `resume.cls` from `resources/` into the same Overleaf project.
+4. Set the generated `.tex` file as the main document if Overleaf does not select it automatically.
+5. Click **Recompile** to generate the PDF.
+
+Repeat with the cover letter `.tex` file if needed.
 
 ---
 
