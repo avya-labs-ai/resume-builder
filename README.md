@@ -150,11 +150,23 @@ primary_language: en
 
 ## Adding project references
 
-`proj_refs/` is for detailed write-ups of projects you've built. The CV agent reads these and pulls specific stack details, methodology, and metrics when tailoring your CV — producing much better output for technical roles than `profile.md` alone.
+`proj_refs/` is for detailed write-ups of projects you've built or worked on. The CV agent reads these and pulls specific stack details, methodology, and metrics when tailoring your CV — producing much better output for technical roles than `profile.md` alone.
 
 See `proj_refs.example/_README.md` for the expected format.
 
-If you use [Avya AIOS](https://github.com/avya-labs/aios) or a Claude Code setup with the `/project-summary` skill, just run it inside your project session and drop the output into `proj_refs/`.
+**Generating a project summary:** 
+1. Right click and copy the project-summary.md file from the root of this project (under .claude/commands).  
+2. Create a commands (case-sensitive) folder under .claude in your root directory, if it doesn't already exist.
+3. Paste the project-summary.md into the commands folder.
+4. Start a new claude session in your VS-Code or Terminal inside VS-Code and run
+
+```
+/project-summary
+```
+
+This generates a structured markdown file documenting your project's architecture, tech stack, metrics, and achievements. Save the output file to `proj_refs/` in this Resume Builder directory. On the next `/apply-for-job` run, the agent will read these summaries and weave relevant technical details into your CV and cover letter.
+
+Alternatively, if you use [Avya AIOS](https://github.com/avya-labs/aios) or another Claude Code setup with the `/project-summary` skill, the output is ready to drop directly into `proj_refs/`.
 
 ---
 
