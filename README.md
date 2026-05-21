@@ -237,7 +237,20 @@ This generates a structured markdown file documenting your project's architectur
 
 Alternatively, if you use [Avya AIOS](https://github.com/avya-labs/aios) or another Claude Code setup with the `/project-summary` skill, the output is ready to drop directly into `proj_refs/`.
 
+---
 
+### `/update-profile` — Sync new projects into your profile
+
+When you finish a new project and want it reflected in future CVs:
+
+1. Run `/project-summary` in that project's Claude Code session to generate a structured summary.
+2. Drop the output file into `proj_refs/` in this repo.
+3. Run `/update-profile` here — it detects which files are new, reads them, and merges the project narrative into `input/profile.md`.
+4. Re-run `/apply-for-job` — the next CV will include the new project.
+
+**Why not automatic?** `apply-for-job` reads only `profile.md` for efficiency — no re-reading unchanged proj_refs on every run. `/update-profile` is the deliberate sync step that keeps `profile.md` current.
+
+---
 
 ## Compiling your resume (no LaTeX experience needed)
 

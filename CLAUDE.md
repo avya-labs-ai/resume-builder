@@ -27,13 +27,12 @@ Run `/apply-for-job` in a Claude Code session. The command will:
 
 1. Read `input/profile.md` — parse the YAML front-matter for `identity` (name, file_slug) and `languages[]` (ordered list of language configs)
 2. Read `input/resume.tex` — the LaTeX CV template
-3. Read all files in `proj_refs/` — active project summaries
-4. Read `lang_rules/{code}.md` for each configured language
-5. Take the JD from `$ARGUMENTS` or prompt the user to paste it
-6. Print a gap analysis to the chat (terminal-only, never saved)
-7. Derive a folder slug `{company}-{role}` from the JD
-8. Copy `resources/resume.cls` into `output/Claude Code/{slug}/` as `resume.cls`.
-9. Write one CV + one cover letter per configured language into `output/Claude Code/{slug}/`:
+3. Read `lang_rules/{code}.md` for each configured language
+4. Take the JD from `$ARGUMENTS` or prompt the user to paste it
+5. Print a gap analysis to the chat (terminal-only, never saved)
+6. Derive a folder slug `{company}-{role}` from the JD
+7. Copy `resources/resume.cls` into `output/Claude Code/{slug}/` as `resume.cls`.
+8. Write one CV + one cover letter per configured language into `output/Claude Code/{slug}/`:
    - `Resume_{file_slug}_{code}.tex`
    - `CoverLetter_{file_slug}_{code}.tex`
 
@@ -90,9 +89,11 @@ One Markdown file per supported language, defining:
 
 ### `proj_refs/` — Active project summaries (gitignored — user adds these)
 
-One Markdown file per active project. These give the CV agent deep engineering context. The agent selects the 1-2 most JD-relevant projects when drafting. Preferred format: see `proj_refs.example/sample_project_summary.md`.
+One Markdown file per project. These are the **update feed** for `input/profile.md` — not a runtime input for `apply-for-job`. When you add a new summary here, run `/update-profile` to synthesize it into `profile.md`.
 
-**Update `proj_refs/`** by running `/project-summary` in the relevant project session and dropping the output file here.
+Preferred format: see `proj_refs.example/sample_project_summary.md`.
+
+**Never read directly by `/apply-for-job`** — all project detail lives in the "Notable Projects" section of `profile.md` after ingestion.
 
 ---
 
@@ -157,6 +158,8 @@ One Markdown file per active project. These give the CV agent deep engineering c
 ## Working rules
 
 - **Never modify `input/resume.tex` or `input/profile.md`** during a CV run — they are source files.
+- **`input/profile.md` is the single source of truth** for all profile data. It contains the full project narratives in its "Notable Projects" section. Do not read `proj_refs/` during a CV generation run.
+- **To add a new project to the profile:** drop a summary into `proj_refs/` and run `/update-profile`. Never manually edit the "Notable Projects" section — let `/update-profile` do it.
 - **Never modify files in `input.example/` or `lang_rules/`** on behalf of a specific user — those are shared templates and rules.
 - **Claude Code generated output belongs under `output/Claude Code/{slug}/`** — never write Claude-generated CVs/letters anywhere else. Codex uses `output/Codex/{slug}/`.
 - **Copy `resources/resume.cls` into every generated output folder** as `resume.cls`, next to the CV and cover letter `.tex` files.
