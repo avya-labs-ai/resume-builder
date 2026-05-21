@@ -205,8 +205,17 @@ Preserve the LaTeX class, packages, and section structure of `input/resume.tex`.
 
 #### Cover letter structure
 
-- Use `\documentclass{letter}` or a clean article-based letter layout.
+- Use a clean `article`-based letter layout, not `letter.cls`.
+- Do not use `\opening`, `\closing`, `\signature`, `\address`, or `\begin{letter}`/`\end{letter}` from `letter.cls`; those macros center or reflow the closing/signature in a way that looks wrong for this project.
 - Include: city + date header (formatted per `lang_rules/{code}.md`), subject line (with label from `lang_rules/{code}.md`), salutation (from `lang_rules/{code}.md`), 3–4 paragraphs, closing (from `lang_rules/{code}.md`), signature with full name.
+- Closing and signature must be left-aligned plain text, for example:
+  ```tex
+  Kind regards,
+
+  \vspace{1.5\baselineskip}
+
+  Jordan Rivera
+  ```
 - Paragraph structure: hook + relevant experience + why this company + call to action / close.
 - The "why this company" paragraph **must use the research from Step 2.5** if research was performed — cite specific details (client verticals, methodology, values, named work). If research was skipped, use the `% TODO` placeholder approach described in Step 2.5.
 - Address the hiring team / company by name (from the JD if available; otherwise use the generic salutation from `lang_rules/{code}.md`).
