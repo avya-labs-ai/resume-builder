@@ -17,7 +17,7 @@ This repo also supports Codex. Codex reads `AGENTS.md` and the prompt wrappers i
 ## How it works
 
 ### First time (new user)
-The **onboarding skill** runs automatically when `input/` doesn't exist or hasn't been configured. It:
+The **onboarding skill** runs automatically when the repo is freshly cloned or when the user says "Onboard me into the project". It:
 1. Creates `input/`, `output/Claude Code/`, `output/Codex/`, and `proj_refs/` from the templates in `input.example/`
 2. Interviews the user and writes `input/profile.md` (profile + language config) and `input/resume.tex` (LaTeX template)
 3. Generates `lang_rules/{code}.md` for any chosen language that doesn't have one yet
