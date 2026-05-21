@@ -18,7 +18,7 @@ cd Resume_builder
 
 > **"Help me set this project up"**
 
-The onboarding workflow will guide you through the rest: it asks about your background, career history, and which languages you want your documents in — then writes your personal profile and CV template automatically.
+The onboarding workflow will guide you through the rest: it asks about your background, career history, project context, and which languages you want your documents in — then writes your personal profile and CV template automatically.
 
 ---
 
@@ -29,6 +29,7 @@ Claude Code users can keep using the existing slash commands:
 ```text
 /apply-for-job
 /project-summary
+/update-profile
 ```
 
 Codex users can ask for the same workflows in plain language:
@@ -37,6 +38,7 @@ Codex users can ask for the same workflows in plain language:
 Apply for this job: [paste job description]
 Help me set this project up
 Create a project summary for my CV
+Update my profile from proj_refs
 ```
 
 Note: Codex does not currently show repo-local `.codex/commands/*.md` files as slash commands in the composer. Those files are workflow references for Codex to read via `AGENTS.md`, so use plain language prompts instead of expecting `/apply-for-job` to appear in the command menu.
@@ -48,11 +50,12 @@ Note: Codex does not currently show repo-local `.codex/commands/*.md` files as s
 The onboarding skill (auto-triggered on fresh clones, or type "help me set this project up"):
 
 1. Creates `input/`, `output/Claude Code/`, `output/Codex/`, and `proj_refs/` from the templates in `input.example/`
-2. Interviews you conversationally — identity, career history, skills, education, goals
+2. Interviews you conversationally or imports an existing resume, then fills gaps interactively
 3. Asks which languages you want (English, German, French, Spanish, and more)
-4. Writes `input/profile.md` (your profile) and `input/resume.tex` (your LaTeX CV template)
-5. Generates `lang_rules/{code}.md` for any language without an existing rules file
-6. Tells you to run `/apply-for-job` when done
+4. Gives you a chance to add project references before writing files
+5. Writes `input/profile.md` (your single source of truth, including `## Notable Projects`) and `input/resume.tex` (your LaTeX CV template)
+6. Generates `lang_rules/{code}.md` for any language without an existing rules file
+7. Tells you to run `/apply-for-job` when done
 
 These personal files are **gitignored** — your data stays on your machine only.
 
@@ -129,10 +132,15 @@ output/
 .
 ├── .claude/
 │   ├── commands/
-│   │   └── apply-for-job.md        # The /apply-for-job slash command
+│   │   ├── apply-for-job.md        # The /apply-for-job slash command
+│   │   ├── project-summary.md      # Creates reusable project summaries
+│   │   └── update-profile.md       # Ingests proj_refs into input/profile.md
 │   └── skills/
 │       └── onboarding/
 │           └── SKILL.md            # Auto-triggered onboarding skill
+│
+├── .codex/
+│   └── commands/                   # Codex workflow wrappers for the same flows
 │
 ├── input.example/                  # Templates (ship with repo; gitignored real folder built from these)
 │   ├── profile.template.md         # Profile template with {{placeholders}}
@@ -156,10 +164,10 @@ output/
 │   └── resume.cls                  # Copied into each generated output folder
 │
 ├── input/                          # YOUR personal files (gitignored — created by onboarding)
-│   ├── profile.md                  # Your profile + language config (front-matter)
+│   ├── profile.md                  # Single source of truth + Notable Projects + ingestion stamp
 │   └── resume.tex                  # Your LaTeX CV template
 │
-├── proj_refs/                      # Your project summaries (gitignored — you add these)
+├── proj_refs/                      # Project summary update feed (gitignored — you add these)
 │   └── *.md
 │
 ├── output/                         # Generated applications (gitignored)
@@ -207,7 +215,9 @@ primary_language: en
 
 ## Adding project references
 
-`proj_refs/` is for detailed write-ups of projects you've built or worked on. The CV agent reads these and pulls specific stack details, methodology, and metrics when tailoring your CV — producing much better output for technical roles than `profile.md` alone.
+`proj_refs/` is for detailed write-ups of projects you've built or worked on. It is an update feed for `input/profile.md`, not a runtime input for `/apply-for-job`.
+
+The CV agent reads project detail from the `## Notable Projects` section inside `input/profile.md`. When you add a new project summary to `proj_refs/`, run `/update-profile` or ask Codex to "update my profile from proj_refs" before applying for jobs.
 
 See `proj_refs.example/_README.md` for the expected format.
 
@@ -233,7 +243,7 @@ OR more specifically
 "Create a project summary for this repo using the workflow in .codex/commands/project-summary.md"
 ```
 
-This generates a structured markdown file documenting your project's architecture, tech stack, metrics, and achievements. Save the output file to `proj_refs/` in this Resume Builder directory. On the next `/apply-for-job` run, the agent will read these summaries and weave relevant technical details into your CV and cover letter.
+This generates a structured markdown file documenting your project's architecture, tech stack, metrics, and achievements. Save the output file to `proj_refs/` in this Resume Builder directory, then run `/update-profile` or ask Codex to "update my profile from proj_refs". The next `/apply-for-job` run will use the updated `## Notable Projects` section in `input/profile.md`.
 
 Alternatively, if you use [Avya AIOS](https://github.com/avya-labs/aios) or another Claude Code setup with the `/project-summary` skill, the output is ready to drop directly into `proj_refs/`.
 
@@ -245,7 +255,7 @@ When you finish a new project and want it reflected in future CVs:
 
 1. Run `/project-summary` in that project's Claude Code session to generate a structured summary.
 2. Drop the output file into `proj_refs/` in this repo.
-3. Run `/update-profile` here — it detects which files are new, reads them, and merges the project narrative into `input/profile.md`.
+3. Run `/update-profile` here, or ask Codex: "Update my profile from proj_refs." It detects which files are new, reads them, and merges the project narrative into `input/profile.md`.
 4. Re-run `/apply-for-job` — the next CV will include the new project.
 
 **Why not automatic?** `apply-for-job` reads only `profile.md` for efficiency — no re-reading unchanged proj_refs on every run. `/update-profile` is the deliberate sync step that keeps `profile.md` current.

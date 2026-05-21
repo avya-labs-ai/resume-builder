@@ -10,7 +10,7 @@ Read a separate project repo, understand it, and write a concise plain-English s
 
 `summaries/{slug}_summary_DD_MM_YYYY.md`
 
-The resulting file can be copied into this Resume Builder repo's `proj_refs/` folder.
+The resulting file can be copied into this Resume Builder repo's `proj_refs/` folder. After copying it there, run the update-profile workflow so the project is merged into `input/profile.md` before the next apply-for-job run.
 
 ## Procedure
 
@@ -19,6 +19,7 @@ The resulting file can be copied into this Resume Builder repo's `proj_refs/` fo
 3. Derive a short lowercase hyphenated project slug.
 4. Write the summary to `summaries/{slug}_summary_DD_MM_YYYY.md`.
 5. Report only the file path and a short completion note.
+6. Tell the user the next step for Resume Builder usage: copy/drop the summary into `proj_refs/`, then ask Codex to update the profile from `proj_refs/`.
 
 ## Summary Shape
 
@@ -33,4 +34,3 @@ Use these sections when enough information exists:
 - Goals and deadlines
 
 Keep it plain English, useful to a third party, and free of filler.
-

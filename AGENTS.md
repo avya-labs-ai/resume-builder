@@ -23,9 +23,11 @@ Use these files as the source of truth:
 - `CLAUDE.md` - full project contract and working rules.
 - `.claude/commands/apply-for-job.md` - canonical generation workflow.
 - `.claude/commands/project-summary.md` - canonical project summary workflow.
+- `.claude/commands/update-profile.md` - canonical profile update workflow.
 - `.claude/skills/onboarding/SKILL.md` - canonical onboarding workflow.
 - `.codex/commands/apply-for-job.md` - Codex-facing wrapper for the apply workflow.
 - `.codex/commands/project-summary.md` - Codex-facing wrapper for project summaries.
+- `.codex/commands/update-profile.md` - Codex-facing wrapper for profile updates.
 - `.codex/commands/onboarding.md` - Codex-facing wrapper for onboarding.
 
 When the user asks to apply for a job in Codex, follow `.codex/commands/apply-for-job.md`. If the user mentions the Claude slash command name `/apply-for-job`, treat it as the same request.
@@ -34,13 +36,15 @@ When the user asks to set up, initialize, onboard, or configure the project in C
 
 When the user asks for a project summary in Codex, follow `.codex/commands/project-summary.md`.
 
+When the user asks to update, refresh, sync, or ingest project references into their profile in Codex, follow `.codex/commands/update-profile.md`. If the user mentions `/update-profile`, treat it as the same request.
+
 ## Inputs
 
 Personal source files are intentionally gitignored:
 
 - `input/profile.md` - profile, identity, language config, and career source material.
 - `input/resume.tex` - LaTeX CV template to preserve.
-- `proj_refs/*.md` - active project summaries.
+- `proj_refs/*.md` - project summary update feed for `input/profile.md`; never runtime input for CV generation.
 
 Shared templates and rules are tracked:
 
@@ -55,6 +59,8 @@ Shared templates and rules are tracked:
 - Do not modify `input/profile.md` or `input/resume.tex` during a CV generation run.
 - Do not modify `input.example/` for a specific user.
 - Do not modify existing files in `lang_rules/` for a specific user. You may create a missing `lang_rules/{code}.md` if a configured language needs it.
+- During apply-for-job, use `input/profile.md` as the single source of truth and do not read `proj_refs/`.
+- To incorporate new project summaries, run the update-profile workflow before apply-for-job.
 - Write Codex-generated CVs and cover letters only under `output/Codex/{slug}/`.
 - Copy `resources/resume.cls` into each Codex-generated output folder as `resume.cls`.
 - Before generation, ask for a company URL or description and use it to write a company-specific "why us" paragraph in the cover letter. If skipped, use the generic paragraph plus the required LaTeX TODO comment from the apply workflow.
@@ -71,6 +77,7 @@ Map common Codex prompts to the workflow:
 - "apply for this job", "generate my CV", "tailor my resume", or `/apply-for-job` -> run the apply workflow.
 - "help me set this up", "onboard me", "initialize this project", "configure my profile" -> run onboarding.
 - "summarize this project for my CV", `/project-summary`, or "make a project summary" -> run the project summary workflow.
+- "update my profile", "sync project refs", "ingest proj_refs", or `/update-profile` -> run the update-profile workflow.
 
 ## Verification
 
@@ -80,5 +87,6 @@ This project usually cannot be fully tested with an automated command because th
 - `resources/resume.cls` was copied into that folder as `resume.cls`.
 - Every configured language has one CV and one cover letter.
 - Output filenames use `identity.file_slug` from `input/profile.md`.
+- Project detail came from `input/profile.md` / `## Notable Projects`, not direct `proj_refs/` reads.
 - The LaTeX source does not contain obvious unescaped text-mode special characters.
 - The CV follows the one-page compression rules from `CLAUDE.md`.

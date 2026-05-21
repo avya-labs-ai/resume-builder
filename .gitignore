@@ -3,6 +3,7 @@
 input/
 output/
 proj_refs/
+docs/
 
 # macOS
 .DS_Store

@@ -14,7 +14,7 @@ Inputs:
 
 - `input/profile.md`
 - `input/resume.tex`
-- all Markdown files in `proj_refs/`
+- `resources/resume.cls`
 - `lang_rules/{code}.md` for every configured language
 
 Outputs:
@@ -32,7 +32,7 @@ Outputs:
    - `identity.file_slug`
    - `languages[]`
    - `primary_language`
-4. Read every `proj_refs/*.md` file that exists.
+4. Use the `## Notable Projects` section in `input/profile.md` as the project context. Do not read `proj_refs/` during this workflow.
 5. Ensure every configured language has a `lang_rules/{code}.md`; create a missing rules file from `lang_rules/_template.md` only when needed.
 6. Get the job description from the user prompt. If it was not provided, ask the user to paste it.
 7. Extract the company name from the JD. Ask the user for a company website URL or short company description; allow `skip`.
@@ -47,6 +47,7 @@ Outputs:
 
 - Never modify `input/profile.md` or `input/resume.tex` during this workflow.
 - Never write Codex-generated output outside `output/Codex/{slug}/`.
+- Never read `proj_refs/` during CV generation. `input/profile.md` is the single runtime source of truth for profile and project narratives.
 - Copy `resources/resume.cls` into each generated output folder as `resume.cls` so the CV can compile next to its class file.
 - Ask for company URL or description before generation and use it for a company-specific "why us" cover letter paragraph. If skipped, include the required LaTeX TODO comment above the generic paragraph.
 - Preserve the CV LaTeX template structure from `input/resume.tex`.
