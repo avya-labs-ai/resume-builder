@@ -32,15 +32,8 @@ languages[]              → ordered list of {code, name} — generate one CV+le
 primary_language         → the source language; all others are translated from primary outputs
 ```
 
-**Active project context (read all files in `proj_refs/`):**
-Use Bash to list them first, then read each one:
-```bash
-ls proj_refs/*.md 2>/dev/null
-```
-Each file is a structured summary of one of the user's active or recent projects. When drafting the CV and cover letter:
-- Select the 1–2 most JD-relevant projects to feature or reference
-- Use the specific stack, methodology, and outcome language from `proj_refs/` (not just the high-level summaries in `profile.md`)
-- Prefer `proj_refs/` detail over `profile.md` summaries when they differ
+**Active project context:**
+The `## Notable Projects` section of `input/profile.md` contains full project narratives — stack, methodology, key decisions, outcomes, and status for each project. Select the 1–2 most JD-relevant projects from that section when drafting the CV and cover letter.
 
 **Note on identity framing (from `input/profile.md`):**
 Follow the framing rules in the "Identity & Framing Rules for the Agent" section of `input/profile.md`. The user has specified their preferred labels and downshift conditions there.
@@ -204,7 +197,7 @@ Preserve the LaTeX class, packages, and section structure of `input/resume.tex`.
 1. Professional Summary (using the heading from `lang_rules/{code}.md`)
 2. Skills / Technical Skills
 3. Professional Experience
-4. Projects (select 1–2 most JD-relevant from `proj_refs/`; one line each — stack + key output + notable decision. For non-primary languages, use the translated heading from `lang_rules/{code}.md`.)
+4. Projects (select 1–2 most JD-relevant from the `## Notable Projects` section of `input/profile.md`; one line each — stack + key output + notable decision. For non-primary languages, use the translated heading from `lang_rules/{code}.md`.)
 5. Education
 6. Languages (spoken languages from profile, with CEFR levels)
 
