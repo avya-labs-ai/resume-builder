@@ -18,7 +18,7 @@ This repo also supports Codex. Codex reads `AGENTS.md` and the prompt wrappers i
 
 ### First time (new user)
 The **onboarding skill** runs automatically when `input/` doesn't exist or hasn't been configured. It:
-1. Creates `input/`, `output/`, and `proj_refs/` from the templates in `input.example/`
+1. Creates `input/`, `output/Claude Code/`, `output/Codex/`, and `proj_refs/` from the templates in `input.example/`
 2. Interviews the user and writes `input/profile.md` (profile + language config) and `input/resume.tex` (LaTeX template)
 3. Generates `lang_rules/{code}.md` for any chosen language that doesn't have one yet
 
@@ -32,7 +32,8 @@ Run `/apply-for-job` in a Claude Code session. The command will:
 5. Take the JD from `$ARGUMENTS` or prompt the user to paste it
 6. Print a gap analysis to the chat (terminal-only, never saved)
 7. Derive a folder slug `{company}-{role}` from the JD
-8. Write one CV + one cover letter per configured language into `output/{slug}/`:
+8. Copy `resources/resume.cls` into `output/Claude Code/{slug}/` as `resume.cls`.
+9. Write one CV + one cover letter per configured language into `output/Claude Code/{slug}/`:
    - `Resume_{file_slug}_{code}.tex`
    - `CoverLetter_{file_slug}_{code}.tex`
 
@@ -123,6 +124,9 @@ One Markdown file per active project. These give the CV agent deep engineering c
 │   ├── de.md
 │   └── {code}.md  (auto-generated)
 │
+├── resources/
+│   └── resume.cls                     # Copied into each generated output folder
+│
 ├── input/                             # Gitignored — created by onboarding
 │   ├── profile.md
 │   └── resume.tex
@@ -131,9 +135,16 @@ One Markdown file per active project. These give the CV agent deep engineering c
 │   └── *.md
 │
 ├── output/                            # Gitignored — generated applications
-│   └── {company}-{role}/
-│       ├── Resume_{slug}_{code}.tex
-│       └── CoverLetter_{slug}_{code}.tex
+│   ├── Claude Code/
+│   │   └── {company}-{role}/
+│   │       ├── resume.cls
+│   │       ├── Resume_{slug}_{code}.tex
+│   │       └── CoverLetter_{slug}_{code}.tex
+│   └── Codex/
+│       └── {company}-{role}/
+│           ├── resume.cls
+│           ├── Resume_{slug}_{code}.tex
+│           └── CoverLetter_{slug}_{code}.tex
 │
 ├── .gitignore                         # Gitignores input/, output/, proj_refs/
 ├── AGENTS.md                          # Working rules for Codex sessions
@@ -147,7 +158,8 @@ One Markdown file per active project. These give the CV agent deep engineering c
 
 - **Never modify `input/resume.tex` or `input/profile.md`** during a CV run — they are source files.
 - **Never modify files in `input.example/` or `lang_rules/`** on behalf of a specific user — those are shared templates and rules.
-- **All generated output belongs under `output/{slug}/`** — never write CVs/letters anywhere else.
+- **Claude Code generated output belongs under `output/Claude Code/{slug}/`** — never write Claude-generated CVs/letters anywhere else. Codex uses `output/Codex/{slug}/`.
+- **Copy `resources/resume.cls` into every generated output folder** as `resume.cls`, next to the CV and cover letter `.tex` files.
 - **Preserve the LaTeX template** from `input/resume.tex` — same `\documentclass`, same packages, same section structure. Adapt content only.
 - **Identity framing is user-defined.** Read the framing rules from the "Identity & Framing Rules for the Agent" section of `input/profile.md`. Follow them exactly.
 - **Each language gets its own rules.** Read `lang_rules/{code}.md` before generating content in that language. Section headings, date formats, salutations, and closings come from those files — not from hardcoded defaults.

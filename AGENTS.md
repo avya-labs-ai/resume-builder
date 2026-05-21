@@ -6,11 +6,13 @@ This repo is shared with Claude Code. Keep the existing Claude workflow intact:
 
 - Claude Code reads `CLAUDE.md` and `.claude/`.
 - Codex reads this `AGENTS.md`.
-- The actual product behavior should stay the same in both tools.
+- The actual product behavior should stay aligned in both tools, except generated application files are separated by tool:
+  - Claude Code writes to `output/Claude Code/{company-role}/`.
+  - Codex writes to `output/Codex/{company-role}/`.
 
 ## What This Project Is
 
-A single-purpose agent workflow: take a job description, then produce a tailored CV and cover letter in every configured language as compilable `.tex` files under `output/{company-role}/`.
+A single-purpose agent workflow: take a job description, then produce a tailored CV and cover letter in every configured language as compilable `.tex` files under the tool-specific output folder.
 
 There is no application server, API, package manager, or runtime to install. The agent is the engine.
 
@@ -53,7 +55,8 @@ Shared templates and rules are tracked:
 - Do not modify `input/profile.md` or `input/resume.tex` during a CV generation run.
 - Do not modify `input.example/` for a specific user.
 - Do not modify existing files in `lang_rules/` for a specific user. You may create a missing `lang_rules/{code}.md` if a configured language needs it.
-- Write generated CVs and cover letters only under `output/{slug}/`.
+- Write Codex-generated CVs and cover letters only under `output/Codex/{slug}/`.
+- Copy `resources/resume.cls` into each Codex-generated output folder as `resume.cls`.
 - Preserve the LaTeX document class, packages, and section structure from `input/resume.tex`.
 - Escape LaTeX special characters in all generated text, especially `_`, `&`, `%`, `$`, `#`, `{`, and `}`.
 - Never invent experience, metrics, tools, certifications, languages, or employment history.
@@ -72,9 +75,9 @@ Map common Codex prompts to the workflow:
 
 This project usually cannot be fully tested with an automated command because the output is agent-generated writing plus LaTeX. After generation, verify by inspection that:
 
-- Output files were written to the expected `output/{slug}/` folder.
+- Output files were written to the expected `output/Codex/{slug}/` folder.
+- `resources/resume.cls` was copied into that folder as `resume.cls`.
 - Every configured language has one CV and one cover letter.
 - Output filenames use `identity.file_slug` from `input/profile.md`.
 - The LaTeX source does not contain obvious unescaped text-mode special characters.
 - The CV follows the one-page compression rules from `CLAUDE.md`.
-

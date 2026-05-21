@@ -47,7 +47,7 @@ Note: Codex does not currently show repo-local `.codex/commands/*.md` files as s
 
 The onboarding skill (auto-triggered on fresh clones, or type "help me set this project up"):
 
-1. Creates `input/`, `output/`, and `proj_refs/` from the templates in `input.example/`
+1. Creates `input/`, `output/Claude Code/`, `output/Codex/`, and `proj_refs/` from the templates in `input.example/`
 2. Interviews you conversationally — identity, career history, skills, education, goals
 3. Asks which languages you want (English, German, French, Spanish, and more)
 4. Writes `input/profile.md` (your profile) and `input/resume.tex` (your LaTeX CV template)
@@ -75,8 +75,11 @@ Apply for this job: [paste job description]
 The agent will ask you to paste the job description. It then:
 
 1. Prints a **gap analysis** (chat only — not saved)
-2. Creates a folder: `output/{company}-{role}/`
+2. Creates a folder in the tool-specific bucket:
+   - Claude Code: `output/Claude Code/{company}-{role}/`
+   - Codex: `output/Codex/{company}-{role}/`
 3. Generates one CV + one cover letter per configured language:
+   - `resume.cls`
    - `Resume_{YourName}_{lang}.tex`
    - `CoverLetter_{YourName}_{lang}.tex`
 
@@ -102,11 +105,20 @@ For a user named Jane Doe, with English + German configured, applying to Acme Gm
 
 ```
 output/
-└── acme-senior-backend-engineer/
-    ├── Resume_JaneDoe_en.tex
-    ├── CoverLetter_JaneDoe_en.tex
-    ├── Resume_JaneDoe_de.tex
-    └── CoverLetter_JaneDoe_de.tex
+├── Claude Code/
+│   └── acme-senior-backend-engineer/
+│       ├── resume.cls
+│       ├── Resume_JaneDoe_en.tex
+│       ├── CoverLetter_JaneDoe_en.tex
+│       ├── Resume_JaneDoe_de.tex
+│       └── CoverLetter_JaneDoe_de.tex
+└── Codex/
+    └── acme-senior-backend-engineer/
+        ├── resume.cls
+        ├── Resume_JaneDoe_en.tex
+        ├── CoverLetter_JaneDoe_en.tex
+        ├── Resume_JaneDoe_de.tex
+        └── CoverLetter_JaneDoe_de.tex
 ```
 
 ---
@@ -140,6 +152,9 @@ output/
 │   ├── de.md                       # German rules
 │   └── {code}.md                   # Auto-generated for any additional language during onboarding or /apply-for-job
 │
+├── resources/
+│   └── resume.cls                  # Copied into each generated output folder
+│
 ├── input/                          # YOUR personal files (gitignored — created by onboarding)
 │   ├── profile.md                  # Your profile + language config (front-matter)
 │   └── resume.tex                  # Your LaTeX CV template
@@ -148,9 +163,16 @@ output/
 │   └── *.md
 │
 ├── output/                         # Generated applications (gitignored)
-│   └── {company}-{role}/
-│       ├── Resume_{YourName}_{lang}.tex
-│       └── CoverLetter_{YourName}_{lang}.tex
+│   ├── Claude Code/
+│   │   └── {company}-{role}/
+│   │       ├── resume.cls
+│   │       ├── Resume_{YourName}_{lang}.tex
+│   │       └── CoverLetter_{YourName}_{lang}.tex
+│   └── Codex/
+│       └── {company}-{role}/
+│           ├── resume.cls
+│           ├── Resume_{YourName}_{lang}.tex
+│           └── CoverLetter_{YourName}_{lang}.tex
 │
 ├── .gitignore                      # Gitignores input/, output/, proj_refs/
 ├── CLAUDE.md                       # Working rules for Claude Code sessions
@@ -238,19 +260,22 @@ After running `/apply-for-job`, your output folder will look like this:
 
 ```
 output/
-└── acme-senior-backend-engineer/
-    ├── Resume_JaneDoe_en.tex
-    └── CoverLetter_JaneDoe_en.tex
+└── Codex/
+    └── acme-senior-backend-engineer/
+        ├── resume.cls
+        ├── Resume_JaneDoe_en.tex
+        └── CoverLetter_JaneDoe_en.tex
 ```
 
-Copy the file `resources/resume.cls` from this repo into that same folder, so it looks like:
+The workflow copies `resources/resume.cls` into that same folder during generation, so the folder should look like:
 
 ```
 output/
-└── acme-senior-backend-engineer/
-    ├── resume.cls                  ← copy this here
-    ├── Resume_JaneDoe_en.tex
-    └── CoverLetter_JaneDoe_en.tex
+└── Codex/
+    └── acme-senior-backend-engineer/
+        ├── resume.cls
+        ├── Resume_JaneDoe_en.tex
+        └── CoverLetter_JaneDoe_en.tex
 ```
 
 The `.cls` file is the style sheet that controls the visual layout. Without it in the same folder, the `.tex` file will not compile.

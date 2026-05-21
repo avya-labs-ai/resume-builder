@@ -1,5 +1,5 @@
 ---
-description: Tailor CV + cover letter in all configured languages against a job description. Reads input/profile.md (identity + language config) and input/resume.tex, then generates one CV + one cover letter per language into output/{company}-{role}/.
+description: Tailor CV + cover letter in all configured languages against a job description. Reads input/profile.md (identity + language config) and input/resume.tex, then generates one CV + one cover letter per language into output/Claude Code/{company}-{role}/.
 argument-hint: "[optional: paste JD inline, otherwise you'll be prompted]"
 allowed-tools: Read, Write, Bash
 ---
@@ -19,8 +19,9 @@ Read these files using the Read tool:
 **Required:**
 - `input/profile.md` — consolidated personal/career profile, identity config, and language list. The YAML front-matter at the top contains `identity` (name, file_slug) and `languages` (ordered list of {code, name} pairs). **Preserve the document class, packages, and structural template of `input/resume.tex`**; only adapt content.
 - `input/resume.tex` — the user's current CV in LaTeX format.
+- `resources/resume.cls` — the LaTeX class file that must be copied into each generated output folder.
 
-If either file is missing, stop immediately and tell the user:
+If any required file is missing, stop immediately and tell the user:
 > "The file `{missing_file}` does not exist. Run the onboarding skill first — just say 'help me set this project up' and I'll walk you through it."
 
 **Extract from the front-matter of `input/profile.md`:**
@@ -90,7 +91,8 @@ Examples:
 
 Use Bash to create the folder:
 ```bash
-mkdir -p "output/{folder-name}"
+mkdir -p "output/Claude Code/{folder-name}"
+cp resources/resume.cls "output/Claude Code/{folder-name}/resume.cls"
 ```
 
 ### Step 5 — Generate files for each configured language
@@ -99,9 +101,9 @@ For each language in the `languages[]` list from the profile front-matter:
 
 1. Load `lang_rules/{code}.md` — this defines section headings, date format, salutation/closing, LaTeX escapes, and length ratio for that language.
 2. Generate a complete, compilable CV and cover letter `.tex` file using the rules from that language file.
-3. Write:
-   - `output/{folder-name}/Resume_{file_slug}_{code}.tex`
-   - `output/{folder-name}/CoverLetter_{file_slug}_{code}.tex`
+3. Write the generated `.tex` files into the same folder as `resume.cls`:
+   - `output/Claude Code/{folder-name}/Resume_{file_slug}_{code}.tex`
+   - `output/Claude Code/{folder-name}/CoverLetter_{file_slug}_{code}.tex`
 
 **Generate primary language first.** For non-primary languages, translate/adapt from the primary-language outputs — do not re-derive from the profile independently. Apply the target language's section headings, date format, salutation conventions, and length-ratio adjustments as specified in its `lang_rules/` file.
 
@@ -192,10 +194,11 @@ Preserve the LaTeX class, packages, and section structure of `input/resume.tex`.
 Print a summary:
 
 ```
-Done. Output saved to: output/{folder-name}/
+Done. Output saved to: output/Claude Code/{folder-name}/
 
 Files created:
 [list each file — one per language, CV + cover letter]
+resume.cls
 
 Next: compile them in your LaTeX editor.
 To add another language later: add it to the `languages` list in input/profile.md,
@@ -206,5 +209,5 @@ then re-run /apply-for-job.
 
 - **Never modify** `input/resume.tex`, `input/profile.md`, or any file in `input.example/` or `lang_rules/` — they are source files (except that you MAY write a new `lang_rules/{code}.md` if one is missing for a configured language).
 - **One job description per run** → one output subfolder.
-- If `output/{folder-name}/` already exists, overwrite the files (most recent run wins).
+- If `output/Claude Code/{folder-name}/` already exists, overwrite the files (most recent run wins).
 - **Be truthful.** Adaptation = emphasise, reorder, reframe. Never invent experience or skills not present in the profile.

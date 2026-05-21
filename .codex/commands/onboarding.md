@@ -10,7 +10,8 @@ Create the user's private working files from the tracked templates:
 
 - `input/profile.md`
 - `input/resume.tex`
-- `output/`
+- `output/Claude Code/`
+- `output/Codex/`
 - `proj_refs/`
 - any missing `lang_rules/{code}.md` files for chosen languages
 
@@ -20,7 +21,7 @@ Create the user's private working files from the tracked templates:
 2. Detect whether onboarding is already complete:
    - If `input/profile.md` exists and contains a real `identity.full_name`, tell the user it is already configured.
    - If files are missing or still contain placeholders, continue.
-3. Create `input/`, `output/`, and `proj_refs/`.
+3. Create `input/`, `output/Claude Code/`, `output/Codex/`, and `proj_refs/`.
 4. Copy:
    - `input.example/profile.template.md` to `input/profile.md`
    - `input.example/resume.template.tex` to `input/resume.tex`
@@ -36,4 +37,3 @@ Create the user's private working files from the tracked templates:
 - Be truthful and preserve uncertainty rather than filling gaps with invented details.
 - Keep the same LaTeX class, packages, and section structure from the template.
 - Use plain ASCII hyphens. Do not use em dashes.
-

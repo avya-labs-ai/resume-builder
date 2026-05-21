@@ -31,12 +31,12 @@ ls input/ 2>/dev/null && head -10 input/profile.md 2>/dev/null || echo "NOT_CONF
 Create the working directories from templates:
 
 ```bash
-mkdir -p input output proj_refs
+mkdir -p input "output/Claude Code" output/Codex proj_refs
 cp input.example/profile.template.md input/profile.md
 cp input.example/resume.template.tex input/resume.tex
 ```
 
-Confirm to the user: "Created `input/`, `output/`, and `proj_refs/` from templates. Now I'll interview you to fill in your details."
+Confirm to the user: "Created `input/`, `output/Claude Code/`, `output/Codex/`, and `proj_refs/` from templates. Now I'll interview you to fill in your details."
 
 ## Step 3 — Interview
 
