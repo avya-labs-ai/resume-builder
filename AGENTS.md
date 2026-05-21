@@ -65,6 +65,8 @@ Shared templates and rules are tracked:
 - Copy `resources/resume.cls` into each Codex-generated output folder as `resume.cls`.
 - Before generation, ask for a company URL or description and use it to write a company-specific "why us" paragraph in the cover letter. If skipped, use the generic paragraph plus the required LaTeX TODO comment from the apply workflow.
 - Preserve the LaTeX document class, packages, and section structure from `input/resume.tex`.
+- Professional Experience must be generated in strict reverse chronological order. Do not reorder roles by JD relevance; use bullet selection and compression for relevance.
+- For AI-focused JDs, keep automotive roles in chronology but compress each automotive role to a maximum of 2 lines total unless the JD explicitly asks for automotive, autonomous driving, ADAS, safety-critical validation, or V&V. Use the saved space for current AI/automation experience and completed AI projects from `input/profile.md`.
 - Escape LaTeX special characters in all generated text, especially `_`, `&`, `%`, `$`, `#`, `{`, and `}`.
 - Never invent experience, metrics, tools, certifications, languages, or employment history.
 - Use plain ASCII hyphens in generated prose and dates. Do not use em dashes.

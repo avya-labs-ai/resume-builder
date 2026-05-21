@@ -157,6 +157,11 @@ Applicant Tracking Systems parse the resulting PDF. To survive parsing:
 - **Experience** = specific artifacts, metrics, and deliverables (test counts, file names, ADR counts, frameworks applied).
 - **Projects** = what was built (product/tool, stack, key output). Not how it was validated.
 
+**Professional experience ordering:**
+- Always list Professional Experience in strict reverse chronological order by role start date or, when start dates are close, by end date/currentness.
+- Never reorder roles by JD relevance. Relevance affects bullet selection and length only, not chronology.
+- Current roles always appear first. Older roles stay below newer roles even when an older role is more relevant to the JD.
+
 **URL format:**
 - Spell out URLs in plain text. Do NOT hide URLs behind display-only link text (e.g. avoid `\href{long-url}{LinkedIn}`). Instead use `\href{https://linkedin.com/in/slug}{linkedin.com/in/slug}` — same URL as both href and display text.
 
@@ -183,6 +188,8 @@ Applicant Tracking Systems parse the resulting PDF. To survive parsing:
 - **Current / most-relevant role:** at most 4 bullets, each 1–2 lines.
 - **Mid-career roles (3–7 years back):** at most 2–3 bullets, each 1–2 lines.
 - **Older roles (>7 years back):** condense to a single line (title + 1 sentence). No expanded detail.
+- **AI-focused JDs:** when the JD is primarily AI, generative AI, machine learning, NLP, chatbot, automation, data science, AI governance, or AI architecture focused, allocate CV space to the current AI/automation experience and the most relevant AI projects. Automotive experience should remain in reverse chronological order but be compressed: limit each automotive role to a maximum of 2 lines total, unless the JD explicitly asks for automotive, autonomous driving, ADAS, safety-critical validation, or V&V.
+- **AI-focused JDs:** include 1–2 strong AI projects with specific stack, architecture, implementation and governance details. Prefer trimming automotive detail before trimming AI projects.
 - **No Hobbies section** unless the JD explicitly signals cultural fit.
 - **Languages line:** one line.
 - **Font size:** keep body bullets at `\fontsize{10pt}{12pt}\selectfont` — do not shrink further.
@@ -196,8 +203,8 @@ Applicant Tracking Systems parse the resulting PDF. To survive parsing:
 Preserve the LaTeX class, packages, and section structure of `input/resume.tex`. Output sections in this order:
 1. Professional Summary (using the heading from `lang_rules/{code}.md`)
 2. Skills / Technical Skills
-3. Professional Experience
-4. Projects (select 1–2 most JD-relevant from the `## Notable Projects` section of `input/profile.md`; one line each — stack + key output + notable decision. For non-primary languages, use the translated heading from `lang_rules/{code}.md`.)
+3. Professional Experience (strict reverse chronological order; do not sort by JD relevance)
+4. Projects (select 1–2 most JD-relevant from the `## Notable Projects` section of `input/profile.md`; for AI-focused JDs, prioritize completed AI/automation projects and allow enough detail to show stack, architecture, implementation and governance; for non-primary languages, use the translated heading from `lang_rules/{code}.md`.)
 5. Education
 6. Languages (spoken languages from profile, with CEFR levels)
 

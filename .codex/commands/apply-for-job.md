@@ -43,6 +43,12 @@ Outputs:
 12. Create `output/Codex/{slug}/`, copy `resources/resume.cls` into it as `resume.cls`, and write all generated `.tex` files there.
 13. Confirm the output folder and file list, including `resume.cls`.
 
+## Codex-Specific Emphasis Rules
+
+- Professional Experience must always be in strict reverse chronological order. Never reorder roles by JD relevance; use bullet selection and compression to show relevance.
+- For AI-focused JDs, keep automotive roles in chronology but compress each automotive role to a maximum of 2 lines total unless the JD explicitly asks for automotive, autonomous driving, ADAS, safety-critical validation, or V&V.
+- For AI-focused JDs, spend the recovered space on the current AI/automation professional experience and 1-2 completed AI projects from `input/profile.md` / `## Notable Projects`.
+
 ## Hard Rules
 
 - Never modify `input/profile.md` or `input/resume.tex` during this workflow.
