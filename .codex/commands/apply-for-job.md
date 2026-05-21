@@ -35,16 +35,20 @@ Outputs:
 4. Read every `proj_refs/*.md` file that exists.
 5. Ensure every configured language has a `lang_rules/{code}.md`; create a missing rules file from `lang_rules/_template.md` only when needed.
 6. Get the job description from the user prompt. If it was not provided, ask the user to paste it.
-7. Print a concise gap analysis to chat only.
-8. Derive the output slug `{company-role}`.
-9. Create `output/Codex/{slug}/`, copy `resources/resume.cls` into it as `resume.cls`, and write all generated `.tex` files there.
-10. Confirm the output folder and file list, including `resume.cls`.
+7. Extract the company name from the JD. Ask the user for a company website URL or short company description; allow `skip`.
+8. If the user provides a URL, research it before generation. If the user provides a description, use it as company research. Use concrete details from that research in the cover letter's "why us" paragraph.
+9. If research is skipped, write a role-targeted but company-generic "why us" paragraph and add the LaTeX TODO comment required by `.claude/commands/apply-for-job.md`.
+10. Print a concise gap analysis to chat only.
+11. Derive the output slug `{company-role}`.
+12. Create `output/Codex/{slug}/`, copy `resources/resume.cls` into it as `resume.cls`, and write all generated `.tex` files there.
+13. Confirm the output folder and file list, including `resume.cls`.
 
 ## Hard Rules
 
 - Never modify `input/profile.md` or `input/resume.tex` during this workflow.
 - Never write Codex-generated output outside `output/Codex/{slug}/`.
 - Copy `resources/resume.cls` into each generated output folder as `resume.cls` so the CV can compile next to its class file.
+- Ask for company URL or description before generation and use it for a company-specific "why us" cover letter paragraph. If skipped, include the required LaTeX TODO comment above the generic paragraph.
 - Preserve the CV LaTeX template structure from `input/resume.tex`.
 - Generate the primary language first; translate/adapt non-primary languages from the primary output.
 - Be truthful. Emphasize and reorder, but do not invent.

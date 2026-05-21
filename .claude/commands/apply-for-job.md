@@ -1,7 +1,7 @@
 ---
 description: Tailor CV + cover letter in all configured languages against a job description. Reads input/profile.md (identity + language config) and input/resume.tex, then generates one CV + one cover letter per language into output/Claude Code/{company}-{role}/.
 argument-hint: "[optional: paste JD inline, otherwise you'll be prompted]"
-allowed-tools: Read, Write, Bash
+allowed-tools: Read, Write, Bash, WebFetch
 ---
 
 # Apply for Job — Resume + Cover Letter Generator
@@ -58,6 +58,35 @@ If a rules file is missing for a chosen language, generate it now from `lang_rul
 - If `$ARGUMENTS` is empty → ask the user: "Paste the job description here. I'll wait for your message." Then wait for their next message and use that as the JD.
 
 ## Workflow
+
+### Step 2.5 — Company research (cover letter "why us" paragraph)
+
+**Extract the company name from the JD.** If the JD names the company, proceed. If not, ask:
+> "I couldn't find a company name in the JD. What's the company called, and do you have their website URL? (Say 'skip' to write a generic cover letter.)"
+
+**Then ask the user:**
+> "I'll research {company name} before writing the cover letter so the 'why us' paragraph is specific. Paste their website URL or a short company description, or say 'skip' to proceed without research."
+
+**If the user provides a URL:**
+- Use WebFetch to retrieve the page.
+- Extract and note (for internal use only — not saved to disk):
+  - What the company does / their core service offering
+  - Their stated client verticals or target market
+  - Any stated values, methodology, or differentiators
+  - Tone of voice (formal/informal, mission-driven/commercial, etc.)
+  - Any specific recent work, case studies, or named clients mentioned
+- Use this to write a **specific, company-targeted "why us" paragraph** in the cover letter — referencing concrete details from the website, not generic phrases.
+- Announce: "Researched {company name}. Cover letter 'why us' paragraph will reference [1-sentence summary of what you found]."
+
+**If the user provides a company description instead of a URL:**
+- Treat the description as user-provided company research.
+- Extract concrete details from it for internal use only — not saved to disk.
+- Use those details to write a **specific, company-targeted "why us" paragraph** in the cover letter.
+- Announce: "Used the company description for {company name}. Cover letter 'why us' paragraph will reference [1-sentence summary of the relevant detail]."
+
+**If the user says 'skip' (or no company name found):**
+- Write a **role-targeted but company-generic** "why us" paragraph based on the JD alone.
+- Insert a LaTeX comment above that paragraph: `% TODO: personalize — research the company and replace this paragraph before sending.`
 
 ### Step 3 — Gap analysis (terminal only, not saved)
 
@@ -186,6 +215,7 @@ Preserve the LaTeX class, packages, and section structure of `input/resume.tex`.
 - Use `\documentclass{letter}` or a clean article-based letter layout.
 - Include: city + date header (formatted per `lang_rules/{code}.md`), subject line (with label from `lang_rules/{code}.md`), salutation (from `lang_rules/{code}.md`), 3–4 paragraphs, closing (from `lang_rules/{code}.md`), signature with full name.
 - Paragraph structure: hook + relevant experience + why this company + call to action / close.
+- The "why this company" paragraph **must use the research from Step 2.5** if research was performed — cite specific details (client verticals, methodology, values, named work). If research was skipped, use the `% TODO` placeholder approach described in Step 2.5.
 - Address the hiring team / company by name (from the JD if available; otherwise use the generic salutation from `lang_rules/{code}.md`).
 - Cover letters follow the same ATS rules as CVs: plain section breaks, ASCII hyphens, spelled-out URLs in the signature block.
 

@@ -57,6 +57,7 @@ Shared templates and rules are tracked:
 - Do not modify existing files in `lang_rules/` for a specific user. You may create a missing `lang_rules/{code}.md` if a configured language needs it.
 - Write Codex-generated CVs and cover letters only under `output/Codex/{slug}/`.
 - Copy `resources/resume.cls` into each Codex-generated output folder as `resume.cls`.
+- Before generation, ask for a company URL or description and use it to write a company-specific "why us" paragraph in the cover letter. If skipped, use the generic paragraph plus the required LaTeX TODO comment from the apply workflow.
 - Preserve the LaTeX document class, packages, and section structure from `input/resume.tex`.
 - Escape LaTeX special characters in all generated text, especially `_`, `&`, `%`, `$`, `#`, `{`, and `}`.
 - Never invent experience, metrics, tools, certifications, languages, or employment history.
