@@ -33,7 +33,7 @@ primary_language         → the source language; all others are translated from
 ```
 
 **Active project context:**
-The `## Notable Projects` section of `input/profile.md` contains full project narratives — stack, methodology, key decisions, outcomes, and status for each project. Select the 1–2 most JD-relevant projects from that section when drafting the CV and cover letter.
+The `## Notable Projects` section of `input/profile.md` contains full project narratives — stack, methodology, key decisions, outcomes, and status for each project. Include all AI-related projects — do not cap at 1–2. Compress each project to the minimum bullets needed to convey stack, architecture, and outcome. Drop non-AI projects only if space is exhausted after compression.
 
 **Note on identity framing (from `input/profile.md`):**
 Follow the framing rules in the "Identity & Framing Rules for the Agent" section of `input/profile.md`. The user has specified their preferred labels and downshift conditions there.
@@ -103,6 +103,31 @@ Compare the JD against the CV + profile. Print a concise analysis to the chat:
 
 Be honest about gaps. The point is to flag them, not paper over them.
 
+### Step 3.5 — Pre-generation sign-off (BLOCKING — wait for user confirmation)
+
+Before creating any folders or writing any files, print a structured plan to the chat:
+
+```
+**Planned output — please confirm before I write any files:**
+
+Projects selected:
+- [project name] — [1-line rationale tied to JD]
+- [project name] — [1-line rationale tied to JD]
+- ...
+
+Identity framing: [Founder / Independent AI Consultant] — [reason]
+
+Key emphasis:
+- [what will be highlighted, e.g. WAT framework, guardrails, governance]
+- ...
+
+Languages: [list]
+
+Reply "go" to generate, or give corrections and I will revise this plan.
+```
+
+**Do not proceed to Step 4 until the user explicitly replies "go" or equivalent confirmation.**
+
 ### Step 4 — Derive folder name
 
 Generate a slug: `{company-slug}-{role-slug}`, lowercase, hyphenated, max 40 characters total, no special characters.
@@ -116,6 +141,22 @@ Use Bash to create the folder:
 mkdir -p "output/Claude Code/{folder-name}"
 cp resources/resume.cls "output/Claude Code/{folder-name}/resume.cls"
 ```
+
+### Step 4.5 — Save the job description
+
+Write the job description verbatim to:
+```
+output/Claude Code/{folder-name}/JobDescription.md
+```
+
+Format the file as:
+```markdown
+# Job Description
+
+{full job description text, verbatim}
+```
+
+No edits, no summarisation — save the exact text the user provided.
 
 ### Step 5 — Generate files for each configured language
 
@@ -180,20 +221,20 @@ Applicant Tracking Systems parse the resulting PDF. To survive parsing:
 
 ---
 
-#### CV one-page constraint (HARD REQUIREMENT)
+#### CV length constraint
 
-**Must fit on a single A4 page when compiled.** Use these tactics:
+**Target: one A4 page. Maximum: two A4 pages.** Aim for one page first; if including all AI projects makes one page impossible without dropping meaningful content, allow up to two pages. Never exceed two pages. Use these tactics:
 - **Professional summary:** 3–4 lines maximum.
 - **Skills section:** 4–6 grouped bullets; pack related items using `$\diamond$` separators within each bullet line.
 - **Current / most-relevant role:** at most 4 bullets, each 1–2 lines.
 - **Mid-career roles (3–7 years back):** at most 2–3 bullets, each 1–2 lines.
 - **Older roles (>7 years back):** condense to a single line (title + 1 sentence). No expanded detail.
-- **AI-focused JDs:** when the JD is primarily AI, generative AI, machine learning, NLP, chatbot, automation, data science, AI governance, or AI architecture focused, allocate CV space to the current AI/automation experience and the most relevant AI projects. Automotive experience should remain in reverse chronological order but be compressed: limit each automotive role to a maximum of 2 lines total, unless the JD explicitly asks for automotive, autonomous driving, ADAS, safety-critical validation, or V&V.
-- **AI-focused JDs:** include 1–2 strong AI projects with specific stack, architecture, implementation and governance details. Prefer trimming automotive detail before trimming AI projects.
+- **AI-focused JDs:** when the JD is primarily AI, generative AI, machine learning, NLP, chatbot, automation, data science, AI governance, or AI architecture focused, allocate CV space to the current AI/automation experience and all AI-related projects. Automotive experience should remain in reverse chronological order but be compressed: limit each automotive role to a maximum of 2 lines total, unless the JD explicitly asks for automotive, autonomous driving, ADAS, safety-critical validation, or V&V.
+- **AI-focused JDs:** include all AI-related projects with specific stack, architecture, implementation and governance details. Compress each project to minimum bullets. Prefer trimming automotive detail before trimming AI projects.
 - **No Hobbies section** unless the JD explicitly signals cultural fit.
 - **Languages line:** one line.
 - **Font size:** keep body bullets at `\fontsize{10pt}{12pt}\selectfont` — do not shrink further.
-- If after a draft the content still looks like it would overflow, drop the lowest-relevance bullets first — never shrink the font.
+- If after a draft the content still looks like it would overflow one page, drop the lowest-relevance bullets first — never shrink the font. Spill to a second page only after all compression options are exhausted.
 - For non-primary languages: apply the `length_ratio` from `lang_rules/{code}.md` proactively — tighten phrasing *before* the content overflows, rather than after. Drop filler phrases specific to that language (e.g. German: omit "im Rahmen meiner Tätigkeit").
 
 ---
@@ -204,7 +245,7 @@ Preserve the LaTeX class, packages, and section structure of `input/resume.tex`.
 1. Professional Summary (using the heading from `lang_rules/{code}.md`)
 2. Skills / Technical Skills
 3. Professional Experience (strict reverse chronological order; do not sort by JD relevance)
-4. Projects (select 1–2 most JD-relevant from the `## Notable Projects` section of `input/profile.md`; for AI-focused JDs, prioritize completed AI/automation projects and allow enough detail to show stack, architecture, implementation and governance; for non-primary languages, use the translated heading from `lang_rules/{code}.md`.)
+4. Projects (include all AI-related projects from the `## Notable Projects` section of `input/profile.md`; compress each to minimum bullets; for AI-focused JDs, prioritize completed AI/automation projects and allow enough detail to show stack, architecture, implementation and governance; for non-primary languages, use the translated heading from `lang_rules/{code}.md`.)
 5. Education
 6. Languages (spoken languages from profile, with CEFR levels)
 
@@ -238,6 +279,7 @@ Done. Output saved to: output/Claude Code/{folder-name}/
 Files created:
 [list each file — one per language, CV + cover letter]
 resume.cls
+JobDescription.md
 
 Next: compile them in your LaTeX editor.
 To add another language later: add it to the `languages` list in input/profile.md,

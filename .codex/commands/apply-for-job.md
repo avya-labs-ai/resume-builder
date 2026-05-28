@@ -32,13 +32,14 @@ Outputs:
    - `identity.file_slug`
    - `languages[]`
    - `primary_language`
-4. Use the `## Notable Projects` section in `input/profile.md` as the project context. Do not read `proj_refs/` during this workflow.
+4. Use the `## Notable Projects` section in `input/profile.md` as the project context. Include all AI-related projects — do not cap at 1–2. Compress each to minimum bullets. Do not read `proj_refs/` during this workflow.
 5. Ensure every configured language has a `lang_rules/{code}.md`; create a missing rules file from `lang_rules/_template.md` only when needed.
 6. Get the job description from the user prompt. If it was not provided, ask the user to paste it.
 7. Extract the company name from the JD. Ask the user for a company website URL or short company description; allow `skip`.
 8. If the user provides a URL, research it before generation. If the user provides a description, use it as company research. Use concrete details from that research in the cover letter's "why us" paragraph.
 9. If research is skipped, write a role-targeted but company-generic "why us" paragraph and add the LaTeX TODO comment required by `.claude/commands/apply-for-job.md`.
 10. Print a concise gap analysis to chat only.
+10.5. Print a pre-generation sign-off plan to chat (projects selected with rationale, identity framing, key emphasis, languages) and wait for the user to confirm ("go") before writing any files.
 11. Derive the output slug `{company-role}`.
 12. Create `output/Codex/{slug}/`, copy `resources/resume.cls` into it as `resume.cls`, and write all generated `.tex` files there.
 13. Confirm the output folder and file list, including `resume.cls`.
@@ -47,7 +48,7 @@ Outputs:
 
 - Professional Experience must always be in strict reverse chronological order. Never reorder roles by JD relevance; use bullet selection and compression to show relevance.
 - For AI-focused JDs, keep automotive roles in chronology but compress each automotive role to a maximum of 2 lines total unless the JD explicitly asks for automotive, autonomous driving, ADAS, safety-critical validation, or V&V.
-- For AI-focused JDs, spend the recovered space on the current AI/automation professional experience and 1-2 completed AI projects from `input/profile.md` / `## Notable Projects`.
+- For AI-focused JDs, spend the recovered space on the current AI/automation professional experience and all AI-related projects from `input/profile.md` / `## Notable Projects`. Target one A4 page; spill to a maximum of two pages only after all compression is exhausted.
 
 ## Hard Rules
 
@@ -61,5 +62,5 @@ Outputs:
 - Be truthful. Emphasize and reorder, but do not invent.
 - Escape all LaTeX special characters.
 - Use ATS-safe headings and conventions from `lang_rules/{code}.md`.
-- Keep each CV to one A4 page.
+- Target one A4 page; maximum two A4 pages. Never exceed two pages.
 - Use plain ASCII hyphens. Do not use em dashes.
