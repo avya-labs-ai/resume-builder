@@ -39,7 +39,8 @@ Outputs:
 8. If the user provides a URL, research it before generation. If the user provides a description, use it as company research. Use concrete details from that research in the cover letter's "why us" paragraph.
 9. If research is skipped, write a role-targeted but company-generic "why us" paragraph and add the LaTeX TODO comment required by `.claude/commands/apply-for-job.md`.
 10. Print a concise gap analysis to chat only.
-10.5. Print a pre-generation sign-off plan to chat (projects selected with rationale, identity framing, key emphasis, languages) and wait for the user to confirm ("go") before writing any files.
+10.4. Compute and print a suitability score (chat only, never saved) using the weighted rubric and harsh, evidence-based grading rules defined in `.claude/commands/apply-for-job.md` (Step 3.4) — that file is the canonical rubric definition; do not duplicate or re-weight it here.
+10.5. Print a pre-generation sign-off plan to chat (projects selected with rationale, identity framing, key emphasis, languages). Branch on the score: if the score is >= 85%, auto-generate without waiting; if the score is < 85%, wait for the user to confirm ("go") before writing any files.
 11. Derive the output slug `{company-role}`.
 12. Create `output/Codex/{slug}/`, copy `resources/resume.cls` into it as `resume.cls`, and write all generated `.tex` files there.
 13. Confirm the output folder and file list, including `resume.cls`.

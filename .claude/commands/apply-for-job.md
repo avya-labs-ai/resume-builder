@@ -103,7 +103,58 @@ Compare the JD against the CV + profile. Print a concise analysis to the chat:
 
 Be honest about gaps. The point is to flag them, not paper over them.
 
-### Step 3.5 — Pre-generation sign-off (BLOCKING — wait for user confirmation)
+### Step 3.4 — Suitability score (terminal only, not saved)
+
+Reusing the Step 3 gap analysis (do **not** re-derive the match/gap data), compute a single weighted suitability percentage for this application.
+
+**Adopt this persona while scoring:** you are a skeptical ATS combined with a recruiter who has decades of experience reading CVs. You default to doubt. An inflated score auto-generates weak applications and defeats the purpose, so when in doubt you score **down**.
+
+**Rubric (weights sum to 100%):**
+
+| Dimension | Weight | What it grades |
+|---|---|---|
+| Must-have skills & qualifications | 40% | Explicit required skills, tools, and qualifications named in the JD, present **and evidenced** in the profile |
+| Experience depth & relevance | 25% | Years and substance of directly relevant work |
+| Domain / industry match | 15% | Sector fit (AI, automotive, fintech, etc.) |
+| Seniority fit | 10% | Level alignment — penalise both under- and over-qualification |
+| Keyword coverage | 10% | Exact JD keywords truthfully present in the profile |
+
+Score each dimension as an integer `earned/weight`, then sum the earned points into a final integer percentage.
+
+**Harsh grading rules (mandatory):**
+- Credit only **evidenced** skills. A keyword in a skills list is **not** the same as demonstrated experience — a skill backed by a role bullet or project narrative scores higher than a bare keyword.
+- "Transferable" / "adjacent" experience earns **partial credit at most, never full**.
+- Unmet explicit must-haves (e.g. "5+ years Kubernetes", a required clearance, a specific degree the user lacks) drive the **Must-have (40%)** dimension down hard. There is **no separate hard cap** — a strong-enough profile can still clear 85% despite a missing must-have; the harsh grading of the 40% dimension is what keeps this honest.
+- When uncertain between two scores, round **down**.
+- Never inflate to clear the 85% threshold. The threshold serves the user, not the score.
+
+**Print this format to chat (never saved to disk):**
+
+```
+## Suitability Score: 78%
+
+Must-have skills & quals   40% → 28/40   (short reason for lost points)
+Experience depth           25% → 20/25
+Domain / industry match    15% → 12/15
+Seniority fit              10% →  9/10
+Keyword coverage           10% →  9/10
+-------------------------------------------
+TOTAL                              78%
+
+Verdict: Below threshold (< 85%) — generation needs your approval.
+```
+
+For a passing score, the verdict line reads:
+`Verdict: At or above threshold (>= 85%) — auto-generating.`
+
+Each dimension line carries a short parenthetical justification whenever points were lost, so the number is defensible. The score is **terminal-only and never written to disk**, exactly like the gap analysis. One score per application, computed against the primary-language profile.
+
+### Step 3.5 — Pre-generation sign-off (gate branches on the Step 3.4 score)
+
+Always print the structured planned-output block below to the chat. The **waiting behaviour** then depends on the score:
+
+- **If score >= 85%:** announce `"Score >= 85% — auto-generating without waiting."` and proceed directly to Step 4. Do **not** wait for "go".
+- **If score < 85%:** print the planned-output block, then **block and wait** for the user to explicitly reply "go" (or equivalent). Write files **only** after that approval. If the user declines or gives corrections, revise the plan and do not generate.
 
 Before creating any folders or writing any files, print a structured plan to the chat:
 
@@ -126,7 +177,7 @@ Languages: [list]
 Reply "go" to generate, or give corrections and I will revise this plan.
 ```
 
-**Do not proceed to Step 4 until the user explicitly replies "go" or equivalent confirmation.**
+**When the score is < 85%, do not proceed to Step 4 until the user explicitly replies "go" or equivalent confirmation. When the score is >= 85%, proceed directly to Step 4 without waiting.**
 
 ### Step 4 — Derive folder name
 
@@ -214,6 +265,13 @@ Applicant Tracking Systems parse the resulting PDF. To survive parsing:
 - Plain hyphens in dates (`Sep 2022 - Mar 2025`), not en-dashes or em-dashes.
 - Contact info in the body (via `\address{}`), not in PDF headers/footers.
 - Standard fonts only (Computer Modern, Latin Modern, helvet, times).
+
+**Em-dash ban (HARD REQUIREMENT — applies to every generated file):**
+- **Never use em-dashes** (`—`, `--`, `---`, `\textemdash`, `\emdash`) anywhere in CV or cover letter content.
+- Wherever you would normally write an em-dash, use a plain hyphen `-` instead.
+- This applies to: inline parenthetical asides, role titles, bullet copy, cover letter paragraphs, subject lines, and any other free text.
+- Wrong: `AI systems — from design to deployment`
+- Right: `AI systems - from design to deployment`
 
 **No icons or emoji.** No Font Awesome glyphs. ATS parsers skip them and may corrupt surrounding text.
 

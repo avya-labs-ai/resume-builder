@@ -176,7 +176,7 @@ Preferred format: see `proj_refs.example/sample_project_summary.md`.
 - **ATS-friendly always.** Use `$\diamond$` separators in Skills and Languages lines. Spell out URLs (no hidden `\href` link text). Standard section names from `lang_rules/{code}.md`. Plain ASCII hyphens in date ranges. No tables/multi-column/images for ATS-critical content. Include exact JD keywords verbatim where truthful. Full ATS rules in the slash command.
 - **NEVER use em dashes.** When in need always use a plain hyphen `-`.
 - **Escape LaTeX special characters** in all generated content, including underscores in code/file names (`quality\_checker`, `book\_expenses`). Unescaped `_` in text mode causes a hard compile error.
-- **ALWAYS ask for green light before generating the CV**: Once the gap analysis has been completed, present your findings. Check if the user is ok with your recommendations. Depending on his feedback and greenlight, go ahead with the generation of the cv and the coverletter. 
+- **Conditional green light before generating the CV**: After the gap analysis, compute the suitability score (Step 3.4) and present it with the planned-output block. **If the score is < 85%, ALWAYS wait for the user's explicit green light ("go") before generating** the CV and cover letter. **If the score is >= 85%, auto-generate without waiting.** The harsh, evidence-based scoring rubric lives in `.claude/commands/apply-for-job.md` (Step 3.4). The score and gap analysis are terminal-only and never saved to disk.
 
 ---
 
