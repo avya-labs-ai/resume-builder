@@ -21,7 +21,10 @@ Read these files using the Read tool:
 - `input/resume.tex` — the user's current CV in LaTeX format.
 - `resources/resume.cls` — the LaTeX class file that must be copied into each generated output folder.
 
-If any required file is missing, stop immediately and tell the user:
+**Optional:**
+- `input/feedback.md` — learned style, framing, identity, structural, and formatting rules captured from prior conversations. If present, read and parse all **active** (non-superseded) rule blocks. Hold them in working memory; they will be applied during generation in Step 5. If the file does not exist, treat the rule set as empty and continue silently — the file is created lazily on first lock in Step 3.5 / Step 6.5.
+
+If any **required** file is missing, stop immediately and tell the user:
 > "The file `{missing_file}` does not exist. Run the onboarding skill first — just say 'help me set this project up' and I'll walk you through it."
 
 **Extract from the front-matter of `input/profile.md`:**
@@ -44,6 +47,31 @@ For each language code in `languages[]`, check whether `lang_rules/{code}.md` ex
 ls lang_rules/*.md 2>/dev/null
 ```
 If a rules file is missing for a chosen language, generate it now from `lang_rules/_template.md` using your language knowledge (section headings, date format, salutation/closing, LaTeX escapes, length ratio). Write it to `lang_rules/{code}.md` before proceeding. Announce: "Generated `lang_rules/{code}.md` for {language name}."
+
+### Step 1.5 — Surface feedback-rule conflicts (skip if `input/feedback.md` absent or has no conflicts)
+
+If `input/feedback.md` was read in Step 1, scan its active (non-superseded) rules for semantic contradictions before doing anything else. Two rules contradict when they tell the agent to do opposite things in the same scope — for example, one `[global]` rule says "never use 'leveraging'" and another `[global]` rule says "always use 'leveraging'".
+
+If at least one conflict exists, print:
+
+```
+⚠ Feedback-rule conflicts detected in input/feedback.md:
+
+   R### vs R###
+       <R### rule summary>
+       <R### rule summary>
+       Scopes both: [global] (or relevant overlap)
+
+Resolution for each:
+   [1] Supersede the older rule with the newer (older marked superseded).
+   [2] Scope one narrower (e.g. [en, senior-roles]) so both coexist.
+   [3] Discard one entirely (edit file).
+
+Reply with the resolution per conflict (e.g. "R001=supersede, R007=scope [en]").
+I will not generate until conflicts are resolved.
+```
+
+Wait for the user's resolution, apply it to `input/feedback.md` (mark superseded rules, narrow scopes, or remove discarded rules), then continue. If no conflicts are detected, skip this step silently.
 
 ### Step 2 — Get the job description
 
@@ -179,6 +207,14 @@ Reply "go" to generate, or give corrections and I will revise this plan.
 
 **When the score is < 85%, do not proceed to Step 4 until the user explicitly replies "go" or equivalent confirmation. When the score is >= 85%, proceed directly to Step 4 without waiting.**
 
+**While waiting for "go" (sub-85% gate only):** the user may push back on the plan with style, framing, identity, structural, ordering, selection, or formatting direction — e.g. "drop the IBS role", "lead with Avya OS", "don't position automotive as central", "compress older roles to one line". For each such message:
+
+1. Apply the requested change to the planned-output block (revise and re-print).
+2. Decide if the correction is **a candidate learning** using a single test: *could this same correction usefully recur on a FUTURE application?* If yes, follow the candidate-learning prompt flow defined in Step 6.5 (same block format, same `[y/n/edit]` semantics, same conflict-check-at-lock-time behaviour). Run this BEFORE asking the user again for "go".
+3. One-off plan changes that are obviously tied to this specific JD (e.g. "for this role, swap the order of projects 2 and 3") are applied silently with no candidate-learning prompt.
+
+The Step 6.5 specification is the canonical block format; do not duplicate it here.
+
 ### Step 4 — Derive folder name
 
 Generate a slug: `{company-slug}-{role-slug}`, lowercase, hyphenated, max 40 characters total, no special characters.
@@ -220,6 +256,8 @@ For each language in the `languages[]` list from the profile front-matter:
    - `output/Claude Code/{folder-name}/CoverLetter_{file_slug}_{code}.tex`
 
 **Generate primary language first.** For non-primary languages, translate/adapt from the primary-language outputs — do not re-derive from the profile independently. Apply the target language's section headings, date format, salutation conventions, and length-ratio adjustments as specified in its `lang_rules/` file.
+
+**Apply learned feedback rules.** Before producing each language's output, filter the rules read from `input/feedback.md` in Step 1 to those tagged `[global]` plus `[{code}]` (where `{code}` is the target language). Apply them as hard constraints on phrasing, vocabulary, section naming, framing, ordering, structure, and any other dimension the rules cover. Rules tagged with the language being generated take precedence over `[global]` rules if both apply to the same surface. Superseded rules are skipped entirely. If `input/feedback.md` did not exist or had no applicable rules, generate as usual.
 
 ---
 
@@ -343,6 +381,87 @@ Next: compile them in your LaTeX editor.
 To add another language later: add it to the `languages` list in input/profile.md,
 then re-run /apply-for-job.
 ```
+
+### Step 6.5 — Watch follow-up turns for improvable feedback (ongoing while the session continues)
+
+After files are generated, the conversation may continue. The user typically reads the output files and asks for changes. For every user message in this session, classify it using a single test:
+
+> **Could this same correction usefully recur on a FUTURE application?**
+
+**If YES → candidate learning.** Apply the requested change to the relevant output file(s) (the `.tex` files in `output/Claude Code/{slug}/`), then print this block:
+
+```
+📝 Candidate learning:
+   Rule:  <one-sentence imperative>
+   Scope: [<global | en | de | etc.>]
+   Why:   <one-sentence reason>
+Lock as learning for future runs? [y / n / edit]
+```
+
+Candidate types include (non-exhaustive):
+- Word or phrase bans / preferred verbs (`"don't use 'leveraging'"`)
+- Framing patterns (`"position automotive as adjacent to AI"`)
+- Identity / skill positioning (`"don't list 'Python Engineering' — I do AI-assisted scripting, not actual programming"`)
+- Section naming or renaming (`"rename 'Programming & Data' to 'AI-Assisted Scripting & Automation'"`)
+- Ordering rules (`"order skills by AI relevance, not alphabetical"`)
+- Structural conventions (`"compress older roles to one line"`)
+- Formatting conventions (`"dates as MM/YYYY, not Month YYYY"`)
+- Tone rules (`"German cover letters open with a concrete fact, not 'ich bin überzeugt'"`)
+- Selection rules (`"for AI-heavy JDs, drop unrelated roles entirely"`)
+- Anything else the user corrects that could plausibly recur
+
+**Response handling:**
+- `y` → append a new `R###` block to `input/feedback.md` (increment the highest `R###` in the file; update the `last_updated:` stamp). Before appending, run the conflict check from Step 1.5 against existing active rules. If a conflict is found, show the inline conflict block:
+
+  ```
+  ⚠ Conflict with R### (active):
+        "<existing rule>"
+     New candidate:
+        "<new rule>"
+  Resolution:
+     [1] Supersede R### with the new rule.
+     [2] Scope the new rule narrower (e.g. [en, senior-only]).
+     [3] Discard the new candidate.
+  ```
+
+  Apply the user's choice, then write.
+
+- `n` → discard the candidate. The change to the current files stays; nothing is saved to `input/feedback.md`.
+- `edit` → let the user rephrase rule, scope, or why; re-print the candidate-learning block; ask again.
+
+**If NO → one-off correction.** Apply the change silently. Do not prompt. Examples that are NOT candidate learnings: a date typo for one role, a name misspelling, a one-time bullet reorder for this exact CV, a LaTeX compile fix, a one-off "tweak this sentence in this paragraph" that doesn't generalize.
+
+**Identity-level facts** (official company name, official role title, anything that belongs in `input/profile.md` long-term): apply to the current output files AND also tell the user:
+> "This looks like a profile-level fact, not just a learning. Consider running `/update-profile` (or editing `input/profile.md` directly) so it persists across applications."
+
+**Scope inference:** default `Scope:` to the language of the file the user was reading when they gave feedback (e.g. opened `Resume_*_de.tex` in their IDE → default `[de]`). If you cannot infer the file, infer from the last referenced file in the conversation. Default to `[global]` when the rule clearly applies regardless of language. The user's `edit` option is the safety net for mis-scoping.
+
+**When in doubt, prefer prompting.** Missing a real learning is more expensive than a `n` keystroke.
+
+**File creation (first lock).** If `input/feedback.md` does not exist when the first candidate is locked, create it using this template:
+
+```markdown
+---
+ingestion_started: YYYY-MM-DD
+last_updated: YYYY-MM-DD
+---
+
+# Learned Style & Framing Rules
+
+These rules were captured from conversational feedback during /apply-for-job
+and /update-profile runs. Each rule is consulted at Step 1 of those commands
+and applied during generation. To remove or edit a rule, edit this file
+directly. Rules marked "superseded by R###" are skipped at read time.
+
+---
+
+### R001 · [global] · YYYY-MM-DD
+**Rule:** <one-sentence imperative>
+**Why:** <one-sentence reason>
+**Source:** <application or context>
+```
+
+Use today's date for `ingestion_started` and `last_updated`. Each subsequent lock appends a new `R###` block at the bottom, increments the counter, and updates `last_updated`.
 
 ## Constraints
 
