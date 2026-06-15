@@ -14,7 +14,7 @@ Detect new Markdown files in `proj_refs/`, synthesize them into the `## Notable 
 2. Read `input/profile.md` and parse the `<!-- proj_refs_ingested: ... -->` block. If it is missing, treat the ingested list as empty.
 3. List `proj_refs/*.md` and compare basenames against the ingested list.
 4. If there are no new files, tell the user that `input/profile.md` is already up to date and stop.
-5. For each new file, read it in full and synthesize a project entry under `## Notable Projects` in `input/profile.md`.
+5. For each new file, read it in full and synthesize a project entry under `## Notable Projects` in `input/profile.md`. Apply the recruiter-lens extraction defined in the canonical command (Step 3): extract impact with quantification, engineering decisions that signal seniority, methodology/discipline signals, scope/ownership, and stack — not just a neutral summary of what the project does. Every bullet must be a recruiter-pause-worthy point; cut anything generic.
 6. Update the ingestion stamp with all newly ingested filenames, preserving existing entries.
 7. Confirm the files ingested, project names added, total ingested count, and that `/apply-for-job` can now use the updated profile.
 
