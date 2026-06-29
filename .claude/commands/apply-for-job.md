@@ -229,9 +229,9 @@ mkdir -p "output/Claude Code/{folder-name}"
 cp resources/resume.cls "output/Claude Code/{folder-name}/resume.cls"
 ```
 
-### Step 4.5 — Save the job description
+### Step 4.5 — Save the job description with gap analysis and score
 
-Write the job description verbatim to:
+Write to:
 ```
 output/Claude Code/{folder-name}/JobDescription.md
 ```
@@ -241,9 +241,43 @@ Format the file as:
 # Job Description
 
 {full job description text, verbatim}
+
+---
+
+## Gap Analysis
+
+**Strong matches**
+- ...
+
+**Gaps (missing or weak)**
+- ...
+
+**Recommendations for adaptation**
+- ...
+
+---
+
+## Suitability Scoring
+
+| Dimension | Weight | Score | Notes |
+|---|---|---|---|
+| Must-have skills & quals | 40% | NN/40 | ... |
+| Experience depth | 25% | NN/25 | ... |
+| Domain / industry match | 15% | NN/15 | ... |
+| Seniority fit | 10% | NN/10 | ... |
+| Keyword coverage | 10% | NN/10 | ... |
+| **TOTAL** | | **NN%** | |
+
+**Initial score: NN%**
+{If the score was revised after user feedback, append a line for each revision:}
+**Revised score: NN%** — {one-line reason for revision, e.g. "user clarified SAP+n8n integration experience"}
+
+**Final score: NN%**
 ```
 
-No edits, no summarisation — save the exact text the user provided.
+Copy the gap analysis text and score table verbatim from Steps 3 and 3.4 — do not re-derive or summarise. If the score was revised at any point during the session (Step 3.5 gate or Step 6.5 follow-up), record every intermediate score with its reason, then the final score. If the score was never revised, "Initial score" and "Final score" are the same value — include both lines anyway for consistency.
+
+**Write this file immediately after Step 4 folder creation**, using the score and gap analysis already in context. If the score is later revised (e.g. the user pushes back and you re-evaluate), **overwrite `JobDescription.md`** in the same output folder to reflect the updated score history before writing the CV/cover letter files.
 
 ### Step 5 — Generate files for each configured language
 

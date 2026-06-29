@@ -9,6 +9,11 @@ agent's own evolution, not the content it produces.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2026-06-19]
+
+### Changed
+- `.claude/commands/apply-for-job.md`: **Step 4.5** now writes the gap analysis and suitability score(s) into `JobDescription.md` alongside the verbatim job description. The file captures the initial score, any intermediate revised scores with their reasons, and the final score. If the score is revised mid-session, `JobDescription.md` is overwritten to reflect the full scoring history before the CV/cover letter files are written.
+
 ## [2026-06-15]
 
 ### Added
