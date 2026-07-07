@@ -15,4 +15,3 @@ docs/
 *.out
 *.synctex.gz
 .claude/worktrees/
-archive/
