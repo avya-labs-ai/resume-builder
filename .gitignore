@@ -14,3 +14,5 @@ docs/
 *.log
 *.out
 *.synctex.gz
+.claude/worktrees/
+archive/
