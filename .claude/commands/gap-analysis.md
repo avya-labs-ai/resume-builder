@@ -27,9 +27,13 @@ The `## Notable Projects` section of `input/profile.md` contains full project na
 - If `$ARGUMENTS` is non-empty → use it as the job description.
 - If `$ARGUMENTS` is empty → ask the user: "Paste the job description here. I'll wait for your message." Then wait for their next message and use that as the JD.
 
+## Step 2.7 — Structured JD parse
+
+Before the gap analysis, print the structured JD breakdown defined in `.claude/commands/apply-for-job.md` Step 2.7 (canonical spec): must-haves (only explicitly required items, quoting the JD's phrasing), nice-to-haves, core responsibilities, and signals (language/tone, seniority level, verbatim keywords). Apply the same classification rules — when unsure whether an item is a hard requirement, classify it as a nice-to-have. If the user corrects a classification, re-print and use the corrected parse.
+
 ## Step 3 — Gap analysis
 
-Compare the JD against the CV + profile. Print a concise analysis to the chat:
+Compare the JD against the CV + profile, using the Step 2.7 parse as the requirement list — do not re-derive requirements from the raw JD. Print a concise analysis to the chat:
 
 ```
 ## Gap Analysis: {Role} at {Company}

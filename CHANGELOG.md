@@ -9,6 +9,20 @@ agent's own evolution, not the content it produces.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2026-07-09]
+
+### Added
+- `.claude/commands/apply-for-job.md`: **Bullet-craft rules** (new hard-requirement block under "Rules for ALL generated files"). Every Experience/Projects bullet must be outcome-first (accomplished X, evidenced by Y, by doing Z) and carry the highest truthful evidence tier available in the profile: measured outcome > countable output > characterized magnitude > named specificity. Bans naked duty statements ("Responsible for", "Worked on", etc.), comma-chained mega-bullets (>3 items), and repeated leading verbs within a role. Mandates harvesting metrics from the profile's Headline Summary / Notable Achievements / Notable Projects before drafting, and that the summary + top role always read as the profile's consultant-who-ships framing. Numbers not present in the profile are never invented or estimated.
+- `.claude/commands/apply-for-job.md`: **Step 5.5 — Post-generation self-review** (mandatory, chat-only). After the `.tex` files are written, the agent re-adopts the skeptical-recruiter persona and runs six pass/fail checks on the primary-language output: JD must-have coverage, verbatim keyword coverage (with an included/omitted report), evidence audit against the bullet-craft hierarchy, claim audit (nothing may exceed the profile, e.g. B2 is never "fluent"), consultant-who-ships positioning, and format. Failed checks trigger a revise-and-recheck loop (max 3 iterations); residual failures are reported plainly, never papered over. A numeric "ATS score" is explicitly forbidden — there is no ground truth for one and self-graded numbers inflate; checks are binary instead. Non-primary languages get a reduced pass (claim audit + format) verifying translations preserve the revisions.
+
+- `.claude/commands/apply-for-job.md`: **Step 2.7 — Structured JD parse** (chat-only, never saved). Before the gap analysis, the JD is broken into must-haves (only explicitly required items, quoting the JD's phrasing), nice-to-haves, core responsibilities, and signals (language/tone, seniority level, verbatim keywords). Ambiguous items demote to nice-to-have. The parse is the canonical requirement list downstream: Step 3 gap analysis compares against it, the Step 3.4 must-have dimension (40%) scores against exactly this list, and the keyword list feeds the Step 5.5 keyword-coverage check. User corrections to the classification are re-printed and used downstream.
+- `.claude/commands/apply-for-job.md`: **Cover letter one-story rule + objection paragraph** (Cover letter structure block). The experience paragraph now tells ONE JD-relevant story in depth (problem, decisions, build, outcome) instead of enumerating projects; 3+ project lists are banned. When the Step 3.4 Seniority-fit dimension loses points or an obvious red flag exists (overqualification, career pivot, short recent stint), the letter must name and defuse the objection in 1-2 sentences — asking the user for the real motivation when unclear, never fabricating one. Step 5.5 self-review gained a matching 7th check (**Cover letter**) and a report line.
+
+### Changed
+- `.codex/commands/apply-for-job.md`: mirrored all additions — new procedure steps 9.5 (JD parse) and 12.5 (self-review), plus Hard Rules entries for bullet craft, the one-story rule, and the objection paragraph, all deferring to the canonical spec in `.claude/commands/apply-for-job.md`.
+- `.claude/commands/gap-analysis.md`: added the same Step 2.7 structured JD parse (referencing the canonical spec) so the standalone gap analysis and the apply-for-job gap analysis classify requirements identically; Step 3 now compares against the parse instead of re-deriving requirements.
+- `CLAUDE.md` / `AGENTS.md`: added matching working-rule summaries (**Bullet craft: outcome-first, evidence-backed**, **Post-generation self-review is mandatory**, **Structured JD parse before gap analysis**, **Cover letter: one story + objection handling**) for Claude/Codex parity.
+
 ## [2026-06-19]
 
 ### Changed

@@ -109,9 +109,36 @@ Wait for the user's resolution, apply it to `input/feedback.md` (mark superseded
 - Write a **role-targeted but company-generic** "why us" paragraph based on the JD alone.
 - Insert a LaTeX comment above that paragraph: `% TODO: personalize — research the company and replace this paragraph before sending.`
 
+### Step 2.7 — Structured JD parse (terminal only, not saved)
+
+Before any gap analysis, break the JD into an explicit structure and print it to the chat:
+
+```
+## JD Parse: {Role} at {Company}
+
+**Must-haves (explicit deal-breakers)**
+- [only requirements the JD marks as required/must/mandatory — quote the JD's own phrasing]
+
+**Nice-to-haves**
+- [items marked "ideally", "a plus", "desirable", "wünschenswert", "von Vorteil"]
+
+**Core responsibilities**
+- [what the day job actually is, condensed]
+
+**Signals**
+- Language & tone: [formal/informal, DE/EN, culture cues from how the JD is written]
+- Seniority level: [junior / mid / senior / lead — as stated or implied]
+- Keywords to use verbatim (where truthful): [exact JD terms]
+```
+
+**Classification rules:**
+- Only items the JD explicitly marks as required belong under must-haves. Wish-list markers demote to nice-to-haves. When ambiguous, apply the test: *would the company reject an otherwise-strong candidate who lacks this?* If unsure, classify as nice-to-have — inflating the must-have list distorts the 40% scoring dimension.
+- This parse is the canonical requirement list downstream: Step 3 gap analysis compares against it, the Step 3.4 **Must-have (40%)** dimension scores against exactly this must-have list (never a re-derived one), and the keyword list feeds the Step 5.5 keyword-coverage check.
+- If the user corrects a classification ("that's not a must-have, the JD says 'ideally'"), re-print the corrected parse and use it downstream.
+
 ### Step 3 — Gap analysis (terminal only, not saved)
 
-Compare the JD against the CV + profile. Print a concise analysis to the chat:
+Compare the JD against the CV + profile, using the Step 2.7 parse as the requirement list — do not re-derive requirements from the raw JD. Print a concise analysis to the chat:
 
 ```
 ## Gap Analysis
@@ -351,6 +378,24 @@ Applicant Tracking Systems parse the resulting PDF. To survive parsing:
 
 ---
 
+#### Bullet craft (HARD REQUIREMENT for Experience and Projects sections)
+
+Formatting rules alone produce clean but flat duty statements. Every bullet must also pass these content rules:
+
+- **Consultant-who-ships positioning.** The Professional Summary and the top role must read exactly as the profile's "Identity & Framing Rules" define: an AI consultant who both advises and personally builds. Bullets should show judgment (decisions, scoping, trade-offs) alongside delivery — not just tasks performed.
+- **Outcome first.** Lead each bullet with what changed or what was delivered, then how. Formula: accomplished X, evidenced by Y, by doing Z.
+- **Evidence hierarchy.** Attach the highest truthful tier of evidence available in the profile. Never invent or estimate a number that is not in the profile.
+  1. **Measured outcome** — %, time saved, error rate, before/after (e.g. "reconciliation from 5 hours to 20 minutes")
+  2. **Countable output** — systems shipped, tests, integrations, clients, verticals, modules, pages, languages (e.g. "8 systems across 5 SMB verticals", "500+ automated tests")
+  3. **Characterized magnitude** — truthful before/after without a precise number (e.g. "replaced a manual multi-hour monthly process", "from zero AI-automation knowledge to production delivery in ~3 months")
+  4. **Named specificity** — concrete anchors that signal seniority (C-level stakeholders, production status, "without source-code access", a named constraint navigated)
+- **Harvest before drafting.** Before writing the Experience section, scan the profile's Headline Summary, Notable Achievements, and Notable Projects for measured outcomes and countable outputs relevant to this JD, and place them in Experience/Projects bullets. A metric that stays in the profile is wasted.
+- **No naked duty statements.** Ban bullet openers like "Responsible for", "Worked on", "Involved in", "Experienced in", "Tasked with". If a bullet has no evidence at any tier, rewrite it around a decision or constraint — or drop it.
+- **One idea per bullet, max 2 lines.** No comma-chained enumerations of more than 3 items in a single bullet — they do not survive a 6-second recruiter skim.
+- **Verb variety.** Do not repeat the same leading verb within one role's bullets.
+
+---
+
 #### CV length constraint
 
 **Target: one A4 page. Maximum: two A4 pages.** Aim for one page first; if including all AI projects makes one page impossible without dropping meaningful content, allow up to two pages. Never exceed two pages. Use these tactics:
@@ -394,10 +439,42 @@ Preserve the LaTeX class, packages, and section structure of `input/resume.tex`.
 
   Jordan Rivera
   ```
-- Paragraph structure: hook + relevant experience + why this company + call to action / close.
+- Paragraph structure: hook + one deep story + why this company + call to action / close.
+- **One-story rule (HARD REQUIREMENT):** the experience paragraph tells ONE story — the single most JD-relevant project or engagement — in depth: the problem, the key decisions, what was built, what came out. Never enumerate 3+ projects in a paragraph; the recruiter is already holding the CV, and a list demonstrates nothing. Other projects may get at most one passing clause. Depth proves the consultant-who-ships positioning; breadth only claims it.
+- **Objection paragraph (conditional, HARD REQUIREMENT when triggered):** if the Step 3.4 **Seniority fit** dimension lost points, or an obvious red flag exists (overqualified founder applying to a junior role, career pivot, a short recent stint), the letter must spend 1-2 sentences naming the objection and defusing it — e.g. why a practice owner wants this specific mandate at this level. Name the elephant, one sentence, move on. An unaddressed objection gets answered by the recruiter — usually against the candidate. Never fabricate a defusing reason; if unsure of the real motivation, ask the user before writing it.
 - The "why this company" paragraph **must use the research from Step 2.5** if research was performed — cite specific details (client verticals, methodology, values, named work). If research was skipped, use the `% TODO` placeholder approach described in Step 2.5.
 - Address the hiring team / company by name (from the JD if available; otherwise use the generic salutation from `lang_rules/{code}.md`).
 - Cover letters follow the same ATS rules as CVs: plain section breaks, ASCII hyphens, spelled-out URLs in the signature block.
+
+### Step 5.5 — Post-generation self-review (mandatory; report is terminal-only, never saved)
+
+After writing the `.tex` files, re-adopt the skeptical recruiter persona from Step 3.4 and review the **primary-language** CV and cover letter as finished documents. Do **not** compute or claim a numeric "ATS score" — there is no ground truth for one, and self-graded numbers inflate. Use hard pass/fail checks instead:
+
+1. **Must-have coverage** — every explicit JD must-have is either evidenced in the CV or consciously omitted (list the omissions and why).
+2. **Keyword coverage** — list the exact JD keywords present verbatim in the CV, and the ones omitted with the reason (`not truthful` or `no space`).
+3. **Evidence audit** — every Experience bullet carries evidence at tier 1–4 of the Bullet-craft hierarchy; no naked duty statements survive.
+4. **Claim audit** — no claim exceeds the profile: language levels (B2 is never "fluent"), ownership, project status, metrics.
+5. **Positioning** — the summary and top role read as the profile's consultant-who-ships framing; a stranger skimming 6 seconds would say "AI consultant who builds", not "generic automation engineer".
+6. **Format** — length target, em-dash ban, `$\diamond$` separators, LaTeX escaping, URL rules, section headings from `lang_rules/{code}.md`.
+7. **Cover letter** — tells one deep story, not a project list; the objection paragraph is present when the Step 3.4 Seniority-fit dimension lost points or an obvious red flag exists; the "why us" paragraph uses the Step 2.5 research when research was performed.
+
+**Revision loop:** if any check fails, revise the generated file(s) and re-run the failed checks. Maximum 3 iterations. Then print the report:
+
+```
+## Self-Review — {slug}
+
+Must-have coverage   PASS/FAIL  (omitted: ..., reason)
+Keyword coverage     PASS/FAIL  (in: kw1, kw2, ... | out: kw3 — not truthful)
+Evidence audit       PASS/FAIL  (N bullets tier 1-2, N tier 3-4, 0 naked)
+Claim audit          PASS/FAIL
+Positioning          PASS/FAIL
+Format               PASS/FAIL
+Cover letter         PASS/FAIL  (one story: ... | objection: addressed / not triggered)
+
+Iterations: N. Residual issues: none / [state them plainly].
+```
+
+If anything still fails after 3 iterations, say so plainly in `Residual issues` — never silently claim a clean pass. For **non-primary languages**, do not re-run the full checklist; verify only that the translations preserve the revisions (claim audit + format checks). This report is printed to chat only — like the gap analysis, it is never written to disk.
 
 ### Step 6 — Confirm completion
 
