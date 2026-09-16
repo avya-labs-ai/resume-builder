@@ -102,7 +102,7 @@ Toolchain, Engineering Governance, etc.
 
 <!--
 Continue adding roles. For roles older than 7 years, one sentence is usually enough.
-The agent condenses older roles automatically to keep the CV to one A4 page.
+The agent targets approximately 1-1.5 A4 pages and preserves strong evidence instead of forcing all content onto one page.
 -->
 
 ---

@@ -32,7 +32,8 @@ Run `/apply-for-job` in a Claude Code session. The command will:
 5. Print a gap analysis to the chat (terminal-only, never saved)
 6. Derive a folder slug `{company}-{role}` from the JD
 7. Copy `resources/resume.cls` into `output/Claude Code/{slug}/` as `resume.cls`.
-8. Write one CV + one cover letter per configured language into `output/Claude Code/{slug}/`:
+8. Write `JobDescription.md` and initialize or preserve the append-only `Clarifications.md` in `output/Claude Code/{slug}/`.
+9. Write one CV + one cover letter per configured language into `output/Claude Code/{slug}/`:
    - `Resume_{file_slug}_{code}.tex`
    - `CoverLetter_{file_slug}_{code}.tex`
 
@@ -81,7 +82,7 @@ One Markdown file per supported language, defining:
 - ATS-safe section headings (in that language)
 - Date format and month abbreviations
 - Cover letter salutation, closing, subject-line label
-- Length ratio vs. primary language (for one-page constraint management)
+- Length ratio vs. primary language (for comparable multi-language layout management)
 - LaTeX special character escapes (umlauts, accents, etc.)
 - Phrasing notes and ATS gotchas
 
@@ -139,11 +140,15 @@ Preferred format: see `proj_refs.example/sample_project_summary.md`.
 │   ├── Claude Code/
 │   │   └── {company}-{role}/
 │   │       ├── resume.cls
+│   │       ├── JobDescription.md
+│   │       ├── Clarifications.md
 │   │       ├── Resume_{slug}_{code}.tex
 │   │       └── CoverLetter_{slug}_{code}.tex
 │   └── Codex/
 │       └── {company}-{role}/
 │           ├── resume.cls
+│           ├── JobDescription.md
+│           ├── Clarifications.md
 │           ├── Resume_{slug}_{code}.tex
 │           └── CoverLetter_{slug}_{code}.tex
 │
@@ -172,7 +177,7 @@ Preferred format: see `proj_refs.example/sample_project_summary.md`.
 - **One job description = one output subfolder.** Re-running with the same JD overwrites the previous output.
 - **Professional Experience chronology is fixed.** Always list roles in strict reverse chronological order. Do not move older roles above newer ones because they match the JD better; adjust bullet content and length instead.
 - **AI-focused JDs shift emphasis to AI work.** If the JD focuses on AI, generative AI, machine learning, NLP, chatbots, automation, data science, AI governance, or AI architecture, compress automotive roles to a maximum of 2 lines each unless automotive/safety-critical/V&V experience is explicitly requested. Use the space for current AI/automation experience and the strongest completed AI projects from `input/profile.md`.
-- **CVs must fit on a single A4 page.** Summary: 3-4 lines. Skills: 4-6 grouped bullets with `$\diamond$` separators. Most-relevant role: 4 bullets max. Mid-career roles: 2-3 bullets. Older roles (>7 years): 1 line. No Hobbies section unless JD signals cultural fit. Font: `\fontsize{10pt}{12pt}\selectfont` - do not shrink further; drop lowest-relevance bullets first.
+- **CV substance outranks a one-page target.** Aim for approximately 1-1.5 A4 pages of readable, relevant content. A second physical page is acceptable when it creates an intentional, well-balanced home for strong project, education, or supporting evidence; never exceed two pages. Summary: 3-4 lines. Skills: 4-6 grouped bullets with `$\diamond$` separators. Most-relevant role: 4 bullets max. Mid-career roles: 2-3 bullets. Older roles (>7 years): 1 line. Give selected projects enough space to show the problem, judgement, architecture, and outcome. No Hobbies section unless JD signals cultural fit. Font: `\fontsize{10pt}{12pt}\selectfont` - do not shrink it or tighten spacing solely to force one page.
 - **ATS-friendly always.** Use `$\diamond$` separators in Skills and Languages lines. Spell out URLs (no hidden `\href` link text). Standard section names from `lang_rules/{code}.md`. Plain ASCII hyphens in date ranges. No tables/multi-column/images for ATS-critical content. Include exact JD keywords verbatim where truthful. Full ATS rules in the slash command.
 - **Bullet craft: outcome-first, evidence-backed.** Every Experience/Projects bullet leads with the outcome and carries the highest truthful evidence tier from the profile: measured outcome > countable output > characterized magnitude > named specificity. No naked duty statements ("Responsible for", "Worked on"). Harvest metrics from the profile's Headline Summary / Notable Achievements / Notable Projects before drafting. Never invent or estimate numbers. The CV must always read as the profile's consultant-who-ships framing. Full rules in `.claude/commands/apply-for-job.md` (Bullet craft).
 - **Post-generation self-review is mandatory.** After writing the `.tex` files, run the pass/fail self-review from `.claude/commands/apply-for-job.md` (Step 5.5): must-have coverage, keyword coverage, evidence audit, claim audit, positioning, format, cover letter. Revise and re-check (max 3 iterations), then print the report to chat. Never fabricate a numeric "ATS score" — there is no ground truth for one. The report is terminal-only and never saved.
@@ -182,6 +187,7 @@ Preferred format: see `proj_refs.example/sample_project_summary.md`.
 - **Escape LaTeX special characters** in all generated content, including underscores in code/file names (`quality\_checker`, `book\_expenses`). Unescaped `_` in text mode causes a hard compile error.
 - **Conditional green light before generating the CV**: After the gap analysis, compute the suitability score (Step 3.4) and present it with the planned-output block. **If the score is < 85%, ALWAYS wait for the user's explicit green light ("go") before generating** the CV and cover letter. **If the score is >= 85%, auto-generate without waiting.** The harsh, evidence-based scoring rubric lives in `.claude/commands/apply-for-job.md` (Step 3.4). The score and gap analysis are terminal-only and never saved to disk.
 - **Capture user feedback as learnings.** During any `/apply-for-job` or `/update-profile` conversation, watch every user message for feedback that could improve future runs — not just voice or style, but anything: framing, identity positioning, section naming, structure, ordering, formatting conventions, what to include or omit, tone, language-specific phrasing, project selection rules, etc. The test is: *could this same correction usefully recur on a future application?* If yes, apply the change to the current files AND present a candidate-learning block (rule, scope, why) asking `Lock as learning for future runs? [y/n/edit]`. On `y`, append a new `R###` block to `input/feedback.md`. Read `input/feedback.md` at Step 1 of both commands and apply applicable rules (`[global]` plus matching language tag) to all generated content. Skip the prompt for one-off corrections that cannot recur (a specific date typo, a name misspelling, a LaTeX compile fix) — apply those silently. Detect conflicts against existing rules at read-time and at lock-time; surface and let the user resolve. Full mechanics live in `.claude/commands/apply-for-job.md` (Steps 1, 1.5, 3.5, 5, 6.5) and `.claude/commands/update-profile.md`.
+- **Preserve application clarifications for interview preparation.** Every application output folder contains an append-only `Clarifications.md`. During `/apply-for-job` follow-up, log each application-related clarification question plus the substantive answer and reasoning about JD interpretation, wording, claims, project/keyword selection, positioning, trade-offs, or interview implications. Preserve the file across reruns; corrections append a new entry instead of rewriting history. Do not log simple approvals, file operations, compiler issues, token/cost questions, or unrelated meta-conversation. Canonical mechanics and entry format: `.claude/commands/apply-for-job.md` Steps 4.6 and 6.6.
 - **Log structural agent changes to `CHANGELOG.md`.** Whenever you modify the structure of the agent itself — `CLAUDE.md`, `AGENTS.md`, any file under `.claude/commands/`, `.claude/skills/`, `.codex/commands/`, `lang_rules/_template.md`, `resources/resume.cls`, or `.gitignore` — append a new entry to `/CHANGELOG.md` describing what was Added, Changed, Deprecated, Removed, or Fixed (Keep-a-Changelog format). Group related edits made in one session under a single dated heading. Do **not** log edits to user data files (`input/profile.md`, `input/resume.tex`, `input/feedback.md`, `proj_refs/`, `output/`) — those are content, not structure. Do **not** log edits to files under `docs/` — those are not structural agent changes. If `CHANGELOG.md` does not exist, create it.
 
 ---
@@ -207,4 +213,4 @@ If the workflow needs to change (adjust ATS rules, add generation steps, change 
 - Tracking applications, deadlines, status
 - Email / cover-letter delivery
 
-This project ends at "N `.tex` files in a folder."
+This project ends at a complete per-application artifact folder: tailored `.tex` files, `resume.cls`, `JobDescription.md`, and the interview-preparation `Clarifications.md` log.

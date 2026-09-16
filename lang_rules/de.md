@@ -62,6 +62,7 @@ Plus all standard ASCII escapes (`\&`, `\%`, `\$`, `\#`, `\_`).
 - Drop filler like "im Rahmen meiner Tätigkeit" → just state the action directly
 - Compound nouns are correct German: "Teststrategieentwicklung", "Anforderungsanalyse" — don't hyphenate unless very long
 - Quantify achievements the same way as English: %, €, Zeitersparnis, Teamgröße
+- While creating a German CV or cover letter, use Künstliche Intelligenz (KI) for Artificail Intellegence. Do not do the swap for an English CV and cover letter
 
 ## Phrasing for common CV phrases
 

@@ -343,7 +343,7 @@ rm -rf input/
 ## Notes
 
 - **Truthful only:** the tool adapts emphasis, ordering, and framing. It never invents skills or experience.
-- **One page:** CVs are enforced to fit one A4 page. Older roles are condensed automatically.
+- **Substance-first length:** CVs target approximately 1-1.5 A4 pages. Two physical pages are acceptable when the second page intentionally carries relevant evidence; content is never cramped or removed merely to force one page.
 - **ATS-safe:** no math glyphs for separators, no hidden link text, standard section headings — every output is built to survive Applicant Tracking System parsing.
 - **Preserves your template:** the adapted CV keeps your LaTeX document class and structure.
 - **Re-running:** same JD → same output folder → files are overwritten.

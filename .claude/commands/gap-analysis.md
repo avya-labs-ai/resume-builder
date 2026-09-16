@@ -48,7 +48,7 @@ Compare the JD against the CV + profile, using the Step 2.7 parse as the require
 
 **Recommendations for adaptation**
 - Projects to feature: [which projects to include and why, tied to JD]
-- Identity framing: [Founder / Independent AI Consultant / etc.] — [reason]
+- Identity framing: [Founder / AI Consultant / etc.] — [reason]
 - Key emphasis: [what to highlight, e.g. specific frameworks, governance, architecture]
 - Roles to compress: [which roles can be trimmed and to what length]
 - Keywords to include verbatim: [exact JD terms to include where truthful]

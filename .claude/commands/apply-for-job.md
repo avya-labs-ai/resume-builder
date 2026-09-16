@@ -221,7 +221,7 @@ Projects selected:
 - [project name] — [1-line rationale tied to JD]
 - ...
 
-Identity framing: [Founder / Independent AI Consultant] — [reason]
+Identity framing: [Founder / AI Consultant] — [reason]
 
 Key emphasis:
 - [what will be highlighted, e.g. WAT framework, guardrails, governance]
@@ -305,6 +305,33 @@ Format the file as:
 Copy the gap analysis text and score table verbatim from Steps 3 and 3.4 — do not re-derive or summarise. If the score was revised at any point during the session (Step 3.5 gate or Step 6.5 follow-up), record every intermediate score with its reason, then the final score. If the score was never revised, "Initial score" and "Final score" are the same value — include both lines anyway for consistency.
 
 **Write this file immediately after Step 4 folder creation**, using the score and gap analysis already in context. If the score is later revised (e.g. the user pushes back and you re-evaluate), **overwrite `JobDescription.md`** in the same output folder to reflect the updated score history before writing the CV/cover letter files.
+
+### Step 4.6 — Initialize the application clarification log
+
+Every application folder must contain:
+```
+output/Claude Code/{folder-name}/Clarifications.md
+```
+
+This is an interview-preparation record of application-related questions the user asks after seeing the JD analysis, CV, or cover letter, together with the agent's explanation and reasoning.
+
+- If `Clarifications.md` does not exist, create it immediately after `JobDescription.md` using this template:
+
+  ```markdown
+  # Application Clarifications
+
+  **Company:** {company}
+  **Role:** {role}
+
+  This append-only log captures application-related clarification questions and
+  the reasoning behind the CV, cover letter, JD interpretation, and positioning.
+
+  ---
+  ```
+
+- If it already exists, preserve every existing entry. Never truncate or overwrite clarification history when regenerating the application.
+- Questions asked before the output folder exists should be held in working memory and appended once the file is initialized.
+- `Clarifications.md` is application-specific output, not a source for generating other applications and not a replacement for `input/feedback.md`.
 
 ### Step 5 — Generate files for each configured language
 
@@ -398,19 +425,19 @@ Formatting rules alone produce clean but flat duty statements. Every bullet must
 
 #### CV length constraint
 
-**Target: one A4 page. Maximum: two A4 pages.** Aim for one page first; if including all AI projects makes one page impossible without dropping meaningful content, allow up to two pages. Never exceed two pages. Use these tactics:
+**Target: approximately 1-1.5 A4 pages of substantive, readable content. Hard maximum: two A4 pages.** Do not optimize for one page. A second physical page is acceptable when it is intentionally used for strong project, education, or supporting evidence; page two may be approximately half-filled when that produces the clearest result. Content and credibility outrank page count. Never remove strong evidence, collapse developed work into labels, shrink the font, or tighten spacing solely to force one page. Use these guidelines:
 - **Professional summary:** 3–4 lines maximum.
 - **Skills section:** 4–6 grouped bullets; pack related items using `$\diamond$` separators within each bullet line.
 - **Current / most-relevant role:** at most 4 bullets, each 1–2 lines.
 - **Mid-career roles (3–7 years back):** at most 2–3 bullets, each 1–2 lines.
 - **Older roles (>7 years back):** condense to a single line (title + 1 sentence). No expanded detail.
 - **AI-focused JDs:** when the JD is primarily AI, generative AI, machine learning, NLP, chatbot, automation, data science, AI governance, or AI architecture focused, allocate CV space to the current AI/automation experience and all AI-related projects. Automotive experience should remain in reverse chronological order but be compressed: limit each automotive role to a maximum of 2 lines total, unless the JD explicitly asks for automotive, autonomous driving, ADAS, safety-critical validation, or V&V.
-- **AI-focused JDs:** include all AI-related projects with specific stack, architecture, implementation and governance details. Compress each project to minimum bullets. Prefer trimming automotive detail before trimming AI projects.
+- **AI-focused JDs:** include the strongest AI-related projects with specific problem, judgement, architecture, implementation, governance, and outcome details. Give each selected project 1-2 substantive bullets; do not compress developed work into a title or generic one-line label. Prefer trimming low-relevance automotive detail before trimming strong AI evidence.
 - **No Hobbies section** unless the JD explicitly signals cultural fit.
 - **Languages line:** one line.
 - **Font size:** keep body bullets at `\fontsize{10pt}{12pt}\selectfont` — do not shrink further.
-- If after a draft the content still looks like it would overflow one page, drop the lowest-relevance bullets first — never shrink the font. Spill to a second page only after all compression options are exhausted.
-- For non-primary languages: apply the `length_ratio` from `lang_rules/{code}.md` proactively — tighten phrasing *before* the content overflows, rather than after. Drop filler phrases specific to that language (e.g. German: omit "im Rahmen meiner Tätigkeit").
+- If the draft exceeds roughly 1.5 pages, remove only clearly redundant or low-relevance material first. Never remove distinctive evidence or reduce readability solely to meet a page target; never exceed two physical pages.
+- For non-primary languages: apply the `length_ratio` from `lang_rules/{code}.md` to keep the translated document comparably substantive and readable. Drop filler phrases specific to that language (e.g. German: omit "im Rahmen meiner Tätigkeit"), but do not flatten project narratives merely to match the primary language's exact line count.
 
 ---
 
@@ -487,6 +514,7 @@ Files created:
 [list each file — one per language, CV + cover letter]
 resume.cls
 JobDescription.md
+Clarifications.md
 
 Next: compile them in your LaTeX editor.
 To add another language later: add it to the `languages` list in input/profile.md,
@@ -573,6 +601,38 @@ directly. Rules marked "superseded by R###" are skipped at read time.
 ```
 
 Use today's date for `ingestion_started` and `last_updated`. Each subsequent lock appends a new `R###` block at the bottom, increments the counter, and updates `last_updated`.
+
+### Step 6.6 — Log application clarifications (ongoing while the session continues)
+
+After answering any application-related clarification question, append an entry to `output/Claude Code/{slug}/Clarifications.md`. This runs alongside Step 6.5: a message may be both a clarification to log and feedback that triggers the candidate-learning flow.
+
+**What to log:** questions about JD interpretation, suitability or gap reasoning, CV/cover-letter wording, claim meaning, project or keyword selection, positioning, omissions, trade-offs, interview implications, or why the agent made a particular application decision.
+
+**What not to log:** simple approvals (`go`, `y`, `n`), file-operation instructions, LaTeX/compiler troubleshooting, token/cost questions, or unrelated meta-conversation that will not help interview preparation.
+
+Append entries chronologically using:
+
+```markdown
+## YYYY-MM-DD - {short topic}
+
+**Question**
+> {the user's question verbatim when reasonably short; otherwise a faithful concise restatement}
+
+**Clarification**
+{the substantive answer given to the user}
+
+**Reasoning / application implication**
+{why the wording or decision was used, what evidence supports it, and any clearer alternative or interview implication}
+
+---
+```
+
+Logging rules:
+- Append only; never silently rewrite an older answer. If a later discussion corrects it, add a new entry that names the earlier topic and records the correction.
+- Preserve the language used in the conversation unless a concise translation is necessary for interview preparation.
+- Be faithful to the response actually given; do not add new claims or post-hoc justification.
+- Log automatically after answering. Do not ask for separate confirmation.
+- Keep the entry useful for later interview review: retain the concrete explanation and evidence, not conversational filler.
 
 ## Constraints
 

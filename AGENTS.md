@@ -63,6 +63,7 @@ Shared templates and rules are tracked:
 - To incorporate new project summaries, run the update-profile workflow before apply-for-job.
 - Write Codex-generated CVs and cover letters only under `output/Codex/{slug}/`.
 - Copy `resources/resume.cls` into each Codex-generated output folder as `resume.cls`.
+- Create and preserve `output/Codex/{slug}/Clarifications.md` for every application. During apply-for-job follow-up, append each application-related clarification question, the substantive answer, and the reasoning/implication for JD interpretation, wording, claims, selection, positioning, trade-offs, or interview preparation. Never overwrite prior entries on reruns; append corrections. Exclude simple approvals, file operations, compiler troubleshooting, token/cost questions, and unrelated meta-conversation. Canonical format and mechanics: `.claude/commands/apply-for-job.md` Steps 4.6 and 6.6.
 - Before generation, ask for a company URL or description and use it to write a company-specific "why us" paragraph in the cover letter. If skipped, use the generic paragraph plus the required LaTeX TODO comment from the apply workflow.
 - Preserve the LaTeX document class, packages, and section structure from `input/resume.tex`.
 - Professional Experience must be generated in strict reverse chronological order. Do not reorder roles by JD relevance; use bullet selection and compression for relevance.
@@ -70,7 +71,7 @@ Shared templates and rules are tracked:
 - Escape LaTeX special characters in all generated text, especially `_`, `&`, `%`, `$`, `#`, `{`, and `}`.
 - Never invent experience, metrics, tools, certifications, languages, or employment history.
 - Use plain ASCII hyphens in generated prose and dates. Do not use em dashes.
-- CVs must be ATS-friendly and fit on a single A4 page.
+- CVs must be ATS-friendly and prioritize substantive, readable evidence over page-count optimization. Target approximately 1-1.5 A4 pages; two physical pages are acceptable when the second page is intentionally used for relevant projects, education, or supporting evidence. Never remove strong evidence or tighten spacing solely to force one page; never exceed two pages.
 - Every Experience/Projects bullet is outcome-first and evidence-backed at the highest truthful tier from the profile: measured outcome > countable output > characterized magnitude > named specificity. No naked duty statements ("Responsible for", "Worked on"). Harvest metrics from the profile's Headline Summary / Notable Achievements / Notable Projects before drafting; never invent or estimate numbers. The CV must always read as the profile's consultant-who-ships framing. Canonical rules: `.claude/commands/apply-for-job.md` (Bullet craft).
 - After writing the `.tex` files, run the mandatory pass/fail self-review from `.claude/commands/apply-for-job.md` Step 5.5 (must-have coverage, keyword coverage, evidence audit, claim audit, positioning, format, cover letter); revise and re-check failed items (max 3 iterations), then print the report to chat. Never fabricate a numeric "ATS score". The report is chat-only, never saved.
 - Before the gap analysis, print a structured JD parse (chat only): must-haves (only explicitly required items), nice-to-haves, core responsibilities, and signals (tone, seniority, verbatim keywords). The parse is the canonical requirement list for the gap analysis, the must-have scoring dimension, and the self-review keyword check. Canonical spec: `.claude/commands/apply-for-job.md` Step 2.7.
@@ -93,8 +94,9 @@ This project usually cannot be fully tested with an automated command because th
 
 - Output files were written to the expected `output/Codex/{slug}/` folder.
 - `resources/resume.cls` was copied into that folder as `resume.cls`.
+- `Clarifications.md` exists in the application folder and preserves any prior entries.
 - Every configured language has one CV and one cover letter.
 - Output filenames use `identity.file_slug` from `input/profile.md`.
 - Project detail came from `input/profile.md` / `## Notable Projects`, not direct `proj_refs/` reads.
 - The LaTeX source does not contain obvious unescaped text-mode special characters.
-- The CV follows the one-page compression rules from `CLAUDE.md`.
+- The CV follows the substance-first 1-1.5-page length policy from `CLAUDE.md`, with no forced one-page compression.

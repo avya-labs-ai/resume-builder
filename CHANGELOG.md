@@ -9,6 +9,30 @@ agent's own evolution, not the content it produces.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2026-08-17]
+
+### Changed
+
+- Changed the default CV identity title in `.claude/commands/apply-for-job.md` and `.claude/commands/gap-analysis.md` from "Independent AI Consultant" to "AI Consultant", per new feedback rule R036 which supersedes R007.
+
+## [2026-07-22]
+
+### Changed
+
+- Replaced the project-wide single-page CV mandate with a substance-first target of approximately 1-1.5 A4 pages across the canonical Claude workflow, Codex wrapper, `CLAUDE.md`, `AGENTS.md`, README, and onboarding profile template.
+- Updated CV generation guidance so a deliberately structured second physical page is acceptable, selected projects receive enough space to show problem, judgement, architecture, and outcome, and strong evidence or readable spacing is never sacrificed merely to force one page.
+
+## [2026-07-16]
+
+### Added
+
+- Added an append-only `Clarifications.md` artifact to the canonical Claude and Codex application workflows. Each application folder now records application-related user questions, the clarification given, and the reasoning or interview implication while preserving existing entries across reruns.
+- `.gitignore`: added `portfolio/` to the user-data ignore block. The directory holds the user's generated portfolio deck (HTML + PDF with personal contact data), which stays on the user's machine like `input/` and `output/`.
+
+### Changed
+
+- Updated `CLAUDE.md` and `AGENTS.md` so the application output contract, operating rules, and verification checklist include the per-application clarification log.
+
 ## [2026-07-09]
 
 ### Added
