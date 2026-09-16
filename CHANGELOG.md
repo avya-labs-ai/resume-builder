@@ -9,6 +9,28 @@ agent's own evolution, not the content it produces.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2026-09-16]
+
+### Added
+
+- New `red-team-review` skill (`.claude/skills/red-team-review/SKILL.md`): a two-stage
+  adversarial QA layer invoked by `/apply-for-job` at the end of generation. Stage 1 scrutinizes
+  the primary-language (English) CV and cover letter as a veteran headhunter reading against the
+  Step 2.7 JD parse, running exactly five full passes and editing the `.tex` files in place, then
+  pausing for user sign-off before non-primary generation. Stage 2 verifies each non-primary
+  document is a faithful one-to-one translation of the finalized primary-language document and
+  edits it in place. Reports are terminal-only; the truthfulness boundary and active
+  `input/feedback.md` rules are hard constraints.
+
+### Changed
+
+- `.claude/commands/apply-for-job.md`: added Step 5.6 invoking the `red-team-review` skill after
+  the Step 5.5 self-review (on top of it, not replacing it).
+- `.codex/commands/apply-for-job.md`: added mirrored step 12.6 following the same skill spec on
+  `output/Codex/{slug}/`.
+- `CLAUDE.md` and `AGENTS.md`: documented the new skill in the layout/skills lists and added a
+  mandatory red-team-review working rule (mirror rule kept in sync).
+
 ## [2026-08-17]
 
 ### Changed

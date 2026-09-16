@@ -503,6 +503,31 @@ Iterations: N. Residual issues: none / [state them plainly].
 
 If anything still fails after 3 iterations, say so plainly in `Residual issues` — never silently claim a clean pass. For **non-primary languages**, do not re-run the full checklist; verify only that the translations preserve the revisions (claim audit + format checks). This report is printed to chat only — like the gap analysis, it is never written to disk.
 
+### Step 5.6 — Red-team review (mandatory; invokes the `red-team-review` skill)
+
+Step 5.5 is the quick pass/fail gate. This step runs the deeper adversarial layer **on top of** it
+by invoking the **`red-team-review` skill** (`.claude/skills/red-team-review/SKILL.md`, the canonical
+spec). It runs in two stages, automatically, at the end of generation:
+
+- **Stage 1 — English / primary-language deep red-team.** Immediately after the primary-language CV
+  and cover letter pass the Step 5.5 self-review, invoke the skill's Stage 1. As a veteran headhunter
+  reading against the Step 2.7 JD parse, run **exactly five** full recruiter passes, **editing the
+  primary-language `.tex` files in place** each pass, then print the per-iteration change log and the
+  honest residual weaknesses. Never fabricate to close a JD gap — the profile truthfulness boundary
+  and all active `input/feedback.md` rules are hard constraints. After the fifth pass, **pause and
+  wait for the user's explicit sign-off before generating any non-primary language** (this is where
+  feedback R031's English-first gate is enforced).
+
+- **Stage 2 — non-primary translation-fidelity red-team.** After the user signs off and each
+  non-primary CV and cover letter have been generated (translated from the finalized primary-language
+  documents), invoke the skill's Stage 2. As a bilingual senior recruiter and translator, verify each
+  non-primary document is a faithful **one-to-one** rendering of the final primary-language document —
+  nothing added, nothing dropped — and adheres to `lang_rules/{code}.md`; **edit the non-primary
+  `.tex` files in place** to fix any divergence, then print the fidelity report.
+
+Both stages' reports are **terminal-only** and never written to disk. See the skill for the full
+persona, per-pass lenses, checklists, editing rules, and output formats.
+
 ### Step 6 — Confirm completion
 
 Print a summary:
