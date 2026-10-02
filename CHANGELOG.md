@@ -9,6 +9,35 @@ agent's own evolution, not the content it produces.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2026-10-02]
+
+### Added
+
+- `AGENTS.md` is now the single source of truth for project rules. It merges the full working
+  rules, input-file docs, layout, workflow routing, and verification that previously lived in
+  both `CLAUDE.md` and `AGENTS.md`, plus a "how the instruction files stay in sync" section and
+  a one-line guard check.
+- `input/feedback.md` gains a `## Standing rules` digest convention (hard rules that must never
+  be missed), read before the individual rules.
+
+### Changed
+
+- `CLAUDE.md` is now a thin wrapper: `@AGENTS.md` import plus a short Claude-only section (slash
+  commands, output folder, guard check). Rules are no longer duplicated between the two files.
+- `.claude/commands/apply-for-job.md`: Step 1 now loads `input/feedback.md` FIRST (before the
+  profile, CV template, and JD) and prints `Loaded {N} active rules`. New Step 1.6 "Rule
+  application map" requires the rules to be applied at every stage (research, JD parse, gap
+  analysis, scoring, planned-output block, generation, reviews), not only at generation. Step 3.4
+  applies scoring rules before scoring; the Step 3.5 planned-output block lists "Rules applied";
+  Step 5.5 adds an eighth pass/fail check, "Rule compliance".
+- `.claude/commands/gap-analysis.md` and `.claude/commands/update-profile.md`: now load the
+  standing rules first (previously `/gap-analysis` ignored `input/feedback.md` entirely).
+- `.codex/commands/apply-for-job.md` and `.codex/commands/update-profile.md`: mirrored the
+  rules-first order by pointing at the canonical Step 1a / 1.6 instead of restating them.
+- `.claude/commands/project-summary.md` and `.codex/commands/project-summary.md`: read
+  `AGENTS.md` first, since `CLAUDE.md` now only imports it.
+- `README.md`: updated to describe `AGENTS.md` as the single source of truth.
+
 ## [2026-09-16]
 
 ### Added

@@ -7,13 +7,15 @@ allowed-tools: Read, Write, Bash
 
 You are updating `input/profile.md` to incorporate new project summaries from `proj_refs/`.
 
-## Step 1 — Read the ingestion stamp and any learned feedback
+## Step 1 — Load standing rules, then read the ingestion stamp
 
-Read `input/profile.md` and extract the `<!-- proj_refs_ingested: ... -->` block at the bottom. Parse the filenames listed inside it — these are already ingested and must be skipped.
+**First**, load the standing rules from `input/feedback.md` exactly as described in `.claude/commands/apply-for-job.md` Step 1a (digest first, active rules only, print the `Loaded {N} active rules` line). Only `[global]` rules apply here.
+
+**Then** read `input/profile.md` and extract the `<!-- proj_refs_ingested: ... -->` block at the bottom. Parse the filenames listed inside it — these are already ingested and must be skipped.
 
 If no stamp block exists in `profile.md`, treat the ingested list as empty (all proj_refs files are new).
 
-Also read `input/feedback.md` if it exists and parse all **active** (non-superseded) rule blocks tagged `[global]`. These will be honored during the recruiter-lens extraction in Step 3 — vocabulary bans, framing patterns, identity positioning, and any other `[global]` rule applies to how new project entries are phrased. Language-tagged rules (`[en]`, `[de]`, etc.) do not apply to this command — the profile is language-neutral source data. If `input/feedback.md` does not exist, treat the rule set as empty and continue silently.
+The `[global]` rules loaded above will be honored during the recruiter-lens extraction in Step 3 — vocabulary bans, framing patterns, identity positioning, and any other `[global]` rule applies to how new project entries are phrased. Language-tagged rules (`[en]`, `[de]`, etc.) do not apply to this command — the profile is language-neutral source data. If `input/feedback.md` does not exist, treat the rule set as empty and continue silently.
 
 Before proceeding to Step 2, run the conflict check from `.claude/commands/apply-for-job.md` Step 1.5 against the active rules just read. If conflicts exist, surface them with the same block format and wait for user resolution. If no conflicts, continue.
 

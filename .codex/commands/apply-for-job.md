@@ -16,7 +16,7 @@ Inputs:
 - `input/resume.tex`
 - `resources/resume.cls`
 - `lang_rules/{code}.md` for every configured language
-- `input/feedback.md` (optional) — learned style, framing, identity, structural, and formatting rules from prior conversations; consulted at Step 1 and applied during generation in Step 12
+- `input/feedback.md` (optional) — learned style, framing, identity, structural, and formatting rules from prior conversations; loaded FIRST (Step 1a of the canonical command) and applied at every stage, not only during generation
 
 Outputs:
 
@@ -29,7 +29,7 @@ Outputs:
 ## Codex Procedure
 
 1. Read `.claude/commands/apply-for-job.md`.
-2. Check that `input/profile.md`, `input/resume.tex`, and `resources/resume.cls` exist. Also read `input/feedback.md` if it exists and parse all active (non-superseded) rule blocks. If the file is absent, treat the rule set as empty and continue silently. After reading, surface any internal conflicts among active rules using the Step 1.5 block format from `.claude/commands/apply-for-job.md`; wait for user resolution before proceeding.
+2. **Standing rules first:** read `input/feedback.md` BEFORE the profile, CV template, or JD, following `.claude/commands/apply-for-job.md` Step 1a (standing-rules digest first, active rules only, print the `Loaded {N} active rules` line, silent if the file is absent), then run the Step 1.5 conflict check and wait for user resolution if conflicts exist. Apply the rules at every stage per Step 1.6 (research, JD parse, gap analysis, scoring, planned-output block with its `Rules applied` list, generation, self-review and red-team rule-compliance check). Then check that `input/profile.md`, `input/resume.tex`, and `resources/resume.cls` exist.
 3. Parse the YAML front matter in `input/profile.md` for:
    - `identity.full_name`
    - `identity.file_slug`

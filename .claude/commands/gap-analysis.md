@@ -8,9 +8,11 @@ allowed-tools: Read, Bash
 
 You are an expert career coach. Your task is to compare a job description against the user's CV and profile, then print a concise gap analysis to the chat. **No files are written. No output folders are created.**
 
-## Step 1 — Read context files
+## Step 1 — Read context files (standing rules first)
 
-Read these files using the Read tool:
+**First**, load the standing rules from `input/feedback.md` exactly as described in `.claude/commands/apply-for-job.md` Step 1a (digest first, active rules only, print the `Loaded {N} active rules` line, run the Step 1.5 conflict check). Apply them throughout this analysis per Step 1.6, especially the scoring and "what to flag" rules. If the file does not exist, continue silently.
+
+**Then** read these files using the Read tool:
 
 **Required:**
 - `input/profile.md` — consolidated personal/career profile, identity config, and language list.

@@ -4,7 +4,7 @@ A Claude Code and Codex automation that tailors your CV and cover letter to a sp
 
 No API key required. No Python. It runs entirely inside your Claude Code or Codex session.
 
-Codex reads `AGENTS.md` for the project contract. Claude Code keeps using `CLAUDE.md` and `.claude/`.
+`AGENTS.md` is the single source of truth for the project contract. Codex reads it directly; Claude Code reads it through `CLAUDE.md`, a thin file that imports `AGENTS.md` and adds Claude-only notes. Edit rules in `AGENTS.md` only.
 
 ---
 
@@ -183,7 +183,7 @@ output/
 │           └── CoverLetter_{YourName}_{lang}.tex
 │
 ├── .gitignore                      # Gitignores input/, output/, proj_refs/
-├── CLAUDE.md                       # Working rules for Claude Code sessions
+├── CLAUDE.md                       # Thin wrapper: imports AGENTS.md + Claude-only notes
 └── README.md                       # This file
 ```
 
@@ -348,4 +348,4 @@ rm -rf input/
 - **Preserves your template:** the adapted CV keeps your LaTeX document class and structure.
 - **Re-running:** same JD → same output folder → files are overwritten.
 
-See [CLAUDE.md](CLAUDE.md) for full working rules and constraints.
+See [AGENTS.md](AGENTS.md) for full working rules and constraints.

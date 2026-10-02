@@ -4,7 +4,7 @@ description: Generate a plain-English project summary and save it to summaries/.
 
 ## Step 1 — Discover context sources
 
-Read `CLAUDE.md` first. Then scan the repo for any files that describe the project, its people, goals, priorities, decisions, integrations, or current state. Common locations to check: `context/`, `docs/`, `decisions/`, `references/`, `context_handoff/`, root-level markdown files. Read whatever exists — skip what doesn't.
+Read `AGENTS.md` first (and `CLAUDE.md` if present; in repos using the single-source pattern it only imports `AGENTS.md`). Then scan the repo for any files that describe the project, its people, goals, priorities, decisions, integrations, or current state. Common locations to check: `context/`, `docs/`, `decisions/`, `references/`, `context_handoff/`, root-level markdown files. Read whatever exists — skip what doesn't.
 
 Do not assume any specific file or folder structure. Adapt to what is actually present.
 
